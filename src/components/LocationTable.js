@@ -9,16 +9,17 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import russian from "../constants/localeTextConstants.js";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
+import LocationAddDialog from "./LocationAddDialog";
+import { useSnackbar } from "notistack";
 
-export default function LocationTable() {
+export default function LocationTable({
+  locations,
+  handleDeleteRow,
+  addLocation
+}) {
+  console.log(locations);
+
   const useStyles = makeStyles({
     toolbarContainer: {
       display: "flex",
@@ -41,87 +42,84 @@ export default function LocationTable() {
   });
 
   const classes = useStyles();
+
   function updateRow(params) {
     console.log("updateRow", params);
   }
-  function deleteRow(params) {
-    console.log("deleteRow", params);
+
+  const editColumn = {
+    field: "edit",
+    headerName: "Редактировать",
+    sortable: false,
+
+    width: 135,
+    renderCell: (params: CellParams) => (
+      <IconButton
+        aria-label="edit"
+        color="primary"
+        className={classes.iconButton}
+        onClick={() => updateRow(params)}
+      >
+        <EditOutlinedIcon />
+      </IconButton>
+    )
+  };
+
+  const deleteColumn = {
+    field: "delete",
+    headerName: "Удалить",
+    sortable: false,
+    renderCell: (params: CellParams) => (
+      <IconButton
+        aria-label="delete"
+        color="secondary"
+        className={classes.iconButton}
+        onClick={() => handleDeleteRow(params.row.id)}
+      >
+        <DeleteForeverOutlinedIcon />
+      </IconButton>
+    )
+  };
+
+  if (locations.columns && locations.columns.length > 0) {
+    locations.columns.push(editColumn);
+    locations.columns.push(deleteColumn);
   }
 
-  const columns: ColDef[] = [
-    { field: "id", headerName: "ID" },
-    { field: "firstName", headerName: "First name", flex: 0.1 },
-    { field: "lastName", headerName: "Last name", flex: 0.1 },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number"
-    },
-    {
-      field: "fullName",
-      headerName: "Full name",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      flex: 0.5,
+  const columns: ColDef[] = locations.columns ? locations.columns : [];
+  const rows = locations.rows ? locations.rows : [];
 
-      valueGetter: (params: ValueGetterParams) =>
-        `${params.getValue("firstName") || ""} ${params.getValue("lastName") ||
-          ""}`
-    },
-
-    {
-      field: "delete",
-      headerName: "Удалить",
-      sortable: false,
-      renderCell: (params: CellParams) => (
-        <IconButton
-          aria-label="delete"
-          color="secondary"
-          className={classes.iconButton}
-          onClick={() => deleteRow(params)}
-        >
-          <DeleteForeverOutlinedIcon />
-        </IconButton>
-      )
-    },
-    {
-      field: "edit",
-      headerName: "Редактировать",
-      sortable: false,
-
-      width: 135,
-      renderCell: (params: CellParams) => (
-        <IconButton
-          aria-label="edit"
-          color="primary"
-          className={classes.iconButton}
-          onClick={() => updateRow(params)}
-        >
-          <EditOutlinedIcon />
-        </IconButton>
-      )
-    }
-  ];
-
-  const rows = [
-    { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-    { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-    { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-    { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-    { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-    { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-    { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-    { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 }
-  ];
   const [open, setOpen] = React.useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (event, number, name, note) => {
     setOpen(false);
+  };
+
+  const handleCreate = (event, number, name, note) => {
+    console.log({ number }, { name }, { note });
+    if (!number || !name) {
+      console.log("number is undefined");
+      enqueueSnackbar("Нобходимо заполнить поля Номер и Название", {
+        variant: "warning",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+    } else {
+      let location = {};
+      location.name = name;
+      location.number = number;
+      if (!!note) location.note = note;
+      console.log(!!note, "location=", location);
+      addLocation(location);
+      setOpen(false);
+    }
   };
 
   function CustomToolbar() {
@@ -148,35 +146,11 @@ export default function LocationTable() {
             </Fab>
           </Tooltip>
         </div>
-        <Dialog
+        <LocationAddDialog
+          handleClose={handleClose}
+          handleCreate={handleCreate}
           open={open}
-          onClose={handleClose}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              To subscribe to this website, please enter your email address
-              here. We will send updates occasionally.
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Email Address"
-              type="email"
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleClose} color="primary">
-              Subscribe
-            </Button>
-          </DialogActions>
-        </Dialog>
+        />
       </GridToolbarContainer>
     );
   }
@@ -187,7 +161,8 @@ export default function LocationTable() {
         height: 700,
         width: "100%",
         justifyContent: "space-between",
-        flexGrow: 1
+        flexGrow: 1,
+        fontSize: "18px"
       }}
     >
       <XGrid

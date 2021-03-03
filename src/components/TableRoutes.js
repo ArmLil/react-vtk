@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 
-import LocationTable from "./LocationTable.js";
+import Location from "../containers/Locations";
 import NamingTable from "./NamingTable.js";
 import ProductsTable from "./ProductsTable.js";
 import EmployeesTable from "./EmployeesTable.js";
@@ -18,11 +18,7 @@ class TableRoutes extends Component {
       <div>
         <Switch>
           <Route history={history} path="/products" component={ProductsTable} />
-          <Route
-            history={history}
-            path="/locations"
-            component={LocationTable}
-          />
+          <Route history={history} path="/locations" component={Location} />
           <Route history={history} path="/namings" component={NamingTable} />
           <Route
             history={history}
