@@ -8,89 +8,45 @@ import { GridToolbarContainer, GridToolbar } from "@material-ui/x-grid";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
-import russian from "../constants/localeTextConstants.js";
+import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
 import LocationAddDialog from "./LocationAddDialog";
+import WorningDialog from "../WorningDialog";
 import { useSnackbar } from "notistack";
+
+const useStyles = makeStyles({
+  toolbarContainer: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  tools: {
+    width: "100%",
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginBottom: 30,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  iconButton: {
+    "&:hover": {
+      backgroundColor: "#bdbdbd"
+    }
+  }
+});
 
 export default function LocationTable({
   locations,
-  handleDeleteRow,
+  deleteLocation,
   addLocation
 }) {
   console.log(locations);
-
-  const useStyles = makeStyles({
-    toolbarContainer: {
-      display: "flex",
-      flexDirection: "column"
-    },
-    tools: {
-      width: "100%",
-      paddingLeft: 20,
-      paddingRight: 20,
-      marginBottom: 30,
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between"
-    },
-    iconButton: {
-      "&:hover": {
-        backgroundColor: "#bdbdbd"
-      }
-    }
-  });
+  const [open, setOpen] = React.useState(false);
+  const [parameters, setParameters] = React.useState({});
+  const [openWorning, setOpenWorning] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const classes = useStyles();
-
-  function updateRow(params) {
-    console.log("updateRow", params);
-  }
-
-  const editColumn = {
-    field: "edit",
-    headerName: "Редактировать",
-    sortable: false,
-
-    width: 135,
-    renderCell: (params: CellParams) => (
-      <IconButton
-        aria-label="edit"
-        color="primary"
-        className={classes.iconButton}
-        onClick={() => updateRow(params)}
-      >
-        <EditOutlinedIcon />
-      </IconButton>
-    )
-  };
-
-  const deleteColumn = {
-    field: "delete",
-    headerName: "Удалить",
-    sortable: false,
-    renderCell: (params: CellParams) => (
-      <IconButton
-        aria-label="delete"
-        color="secondary"
-        className={classes.iconButton}
-        onClick={() => handleDeleteRow(params.row.id)}
-      >
-        <DeleteForeverOutlinedIcon />
-      </IconButton>
-    )
-  };
-
-  if (locations.columns && locations.columns.length > 0) {
-    locations.columns.push(editColumn);
-    locations.columns.push(deleteColumn);
-  }
-
-  const columns: ColDef[] = locations.columns ? locations.columns : [];
-  const rows = locations.rows ? locations.rows : [];
-
-  const [open, setOpen] = React.useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -116,11 +72,66 @@ export default function LocationTable({
       location.name = name;
       location.number = number;
       if (!!note) location.note = note;
-      console.log(!!note, "location=", location);
       addLocation(location);
       setOpen(false);
     }
   };
+
+  const handleDeleteWorningClose = action => {
+    setOpenWorning(false);
+    if (action === "submit") deleteLocation(parameters);
+  };
+
+  const handleDeleteWorningOpen = params => {
+    setOpenWorning(true);
+    setParameters(Object.assign({}, params.row));
+  };
+
+  function editRow(params) {
+    console.log("editRow", params);
+  }
+
+  const editColumn = {
+    field: "edit",
+    headerName: "Редактировать",
+    sortable: false,
+
+    width: 135,
+    renderCell: (params: CellParams) => (
+      <IconButton
+        aria-label="edit"
+        color="primary"
+        className={classes.iconButton}
+        onClick={() => editRow(params)}
+      >
+        <EditOutlinedIcon />
+      </IconButton>
+    )
+  };
+
+  const deleteColumn = {
+    field: "delete",
+    headerName: "Удалить",
+    sortable: false,
+    renderCell: (params: CellParams) => (
+      <IconButton
+        aria-label="delete"
+        color="secondary"
+        className={classes.iconButton}
+        onClick={() => handleDeleteWorningOpen(params)}
+      >
+        <DeleteForeverOutlinedIcon />
+      </IconButton>
+    )
+  };
+
+  if (locations.columns && locations.columns.length > 0) {
+    locations.columns.push(editColumn);
+    locations.columns.push(deleteColumn);
+  }
+
+  const columns: ColDef[] = locations.columns ? locations.columns : [];
+  const rows = locations.rows ? locations.rows : [];
 
   function CustomToolbar() {
     return (
@@ -150,6 +161,11 @@ export default function LocationTable({
           handleClose={handleClose}
           handleCreate={handleCreate}
           open={open}
+        />
+        <WorningDialog
+          openWorning={openWorning}
+          parameters={parameters}
+          handleClose={handleDeleteWorningClose}
         />
       </GridToolbarContainer>
     );

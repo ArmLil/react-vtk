@@ -1,9 +1,5 @@
 import PersistentDrawerLeft from "./containers/AppBar.js";
-import {
-  createMuiTheme,
-  responsiveFontSizes,
-  ThemeProvider
-} from "@material-ui/core/styles";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { SnackbarProvider } from "notistack";
 
 function App() {

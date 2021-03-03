@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSnackbar } from "notistack";
-import LocationTable from "../components/LocationTable";
+import LocationTable from "../components/Location/LocationTable";
 var moment = require("moment");
 
 const Location = () => {
-  const [showAddLocation, setShowAddLocation] = useState(false);
   const [locations, setLocations] = useState({});
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const getLocations = async () => {
@@ -20,14 +19,13 @@ const Location = () => {
   const fetchLocations = async () => {
     const res = await fetch("http://localhost:3001/api/v1/locations");
     const data = await res.json();
-    console.log({ data });
     let columns = [];
     let rows = data.locations.rows;
     let locColumns = [];
     if (data.locations.count > 0)
       locColumns = Object.keys(data.locations.rows[0]);
 
-    locColumns.map(item => {
+    locColumns.forEach(item => {
       let obj = {};
       switch (item) {
         case "id":
@@ -58,6 +56,8 @@ const Location = () => {
           obj.field = item;
           obj.flex = 0.3;
           break;
+        default:
+          break;
       }
       if (data.locations.count > 0 && item !== "deletedAt") {
         columns.push(obj);
@@ -74,14 +74,6 @@ const Location = () => {
     return locations;
   };
 
-  // // Fetch Location
-  // const fetchLocation = async id => {
-  //   const res = await fetch(`http://localhost:3001/api/v1/locations/${id}`);
-  //   const data = await res.json();
-  //
-  //   return data;
-  // };
-
   // Add Location
   const addLocation = async location => {
     try {
@@ -96,7 +88,39 @@ const Location = () => {
       const data = await res.json();
       if (data["Bad Request"]) throw new Error(data["Bad Request"]);
       if (data["errorMessage"]) throw new Error(data["errorMessage"]);
-      let newRows = [...locations.rows, data.location[0]];
+      let newRows = [];
+      if (locations.columns.length > 0) {
+        console.log("if length > 0");
+        newRows = [...locations.rows, data.location[0]];
+        let newLocations = Object.assign(
+          {},
+          { columns: locations.columns, rows: newRows }
+        );
+        setLocations(newLocations);
+      } else {
+        const locationsFromServer = await fetchLocations();
+        setLocations(locationsFromServer);
+      }
+    } catch (err) {
+      console.log(err);
+      enqueueSnackbar(`${err.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+    }
+  };
+
+  // Delete Location
+  const deleteLocation = async parameters => {
+    try {
+      await fetch(`http://localhost:3001/api/v1/locations/${parameters.id}`, {
+        method: "DELETE"
+      });
+
+      let newRows = locations.rows.filter(row => row.id !== parameters.id);
       let newLocations = Object.assign(
         {},
         { columns: locations.columns, rows: newRows }
@@ -113,20 +137,6 @@ const Location = () => {
       });
     }
   };
-  const deleteLocation = async id => {
-    console.log("deleteLocation", id);
-  };
-
-  // // Delete Location
-  // const deleteLocation = async id => {
-  //   const res = await fetch(`http://localhost:3001/api/v1/locations/${id}`, {
-  //     method: "DELETE"
-  //   });
-  //   //We should control the response status to decide if we will change the state or not.
-  //   res.status === 200
-  //     ? setLocations(locations.filter(location => location.id !== id))
-  //     : alert("Error Deleting This Location");
-  // };
 
   // // Toggle Reminder
   // const toggleReminder = async id => {
@@ -155,9 +165,9 @@ const Location = () => {
   return (
     <LocationTable
       locations={locations}
-      handleDeleteRow={deleteLocation}
+      deleteLocation={deleteLocation}
       addLocation={addLocation}
-    />
+    ></LocationTable>
   );
 };
 
