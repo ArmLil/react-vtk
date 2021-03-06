@@ -39,7 +39,7 @@ const Location = () => {
         case "name":
           obj.headerName = "Название";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.4;
           break;
         case "createdAt":
           obj.headerName = "Дата создания";
@@ -54,7 +54,7 @@ const Location = () => {
         case "note":
           obj.headerName = "Примечание";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.4;
           break;
         default:
           break;
@@ -90,8 +90,63 @@ const Location = () => {
       if (data["errorMessage"]) throw new Error(data["errorMessage"]);
       let newRows = [];
       if (locations.columns.length > 0) {
-        console.log("if length > 0");
+        data.location[0].createdAt = moment(data.location.createdAt).format(
+          "YYYY.MM.DD HH:mm"
+        );
+        data.location[0].updatedAt = moment(data.location.updatedAt).format(
+          "YYYY.MM.DD HH:mm"
+        );
         newRows = [...locations.rows, data.location[0]];
+        let newLocations = Object.assign(
+          {},
+          { columns: locations.columns, rows: newRows }
+        );
+        setLocations(newLocations);
+      } else {
+        const locationsFromServer = await fetchLocations();
+        setLocations(locationsFromServer);
+      }
+    } catch (err) {
+      console.log(err);
+      enqueueSnackbar(`${err.message}`, {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center"
+        }
+      });
+    }
+  };
+
+  // Add Location
+  const updateLocation = async location => {
+    try {
+      console.log(JSON.stringify(location));
+      const res = await fetch(
+        `http://localhost:3001/api/v1/locations/${location.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(location)
+        }
+      );
+
+      const data = await res.json();
+      if (data["Bad Request"]) throw new Error(data["Bad Request"]);
+      if (data["errorMessage"]) throw new Error(data["errorMessage"]);
+      data.location.createdAt = moment(data.location.createdAt).format(
+        "YYYY.MM.DD HH:mm"
+      );
+      data.location.updatedAt = moment(data.location.updatedAt).format(
+        "YYYY.MM.DD HH:mm"
+      );
+      let newRows = [];
+      if (locations.columns.length > 0) {
+        newRows = locations.rows.map(loc =>
+          loc.id === location.id ? data.location : loc
+        );
         let newLocations = Object.assign(
           {},
           { columns: locations.columns, rows: newRows }
@@ -167,6 +222,7 @@ const Location = () => {
       locations={locations}
       deleteLocation={deleteLocation}
       addLocation={addLocation}
+      updateLocation={updateLocation}
     ></LocationTable>
   );
 };

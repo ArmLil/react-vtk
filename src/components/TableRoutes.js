@@ -8,7 +8,7 @@ import ProductsTable from "./ProductsTable.js";
 import EmployeesTable from "./EmployeesTable.js";
 import DecimalNumbersTable from "./DecimalNumbersTable.js";
 import NotesTable from "./NotesTable.js";
-import TypesTable from "./TypesTable.js";
+import Types from "../containers/Types.js";
 
 class TableRoutes extends Component {
   render() {
@@ -31,7 +31,7 @@ class TableRoutes extends Component {
             component={DecimalNumbersTable}
           />
           <Route history={history} path="/notes" component={NotesTable} />
-          <Route history={history} path="/types" component={TypesTable} />
+          <Route history={history} path="/types" component={Types} />
           <Redirect from="/" to="/products" />
         </Switch>
       </div>

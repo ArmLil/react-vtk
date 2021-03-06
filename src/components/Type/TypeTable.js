@@ -10,8 +10,8 @@ import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined"
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
-import LocationAddDialog from "./LocationAddDialog";
-import LocationUpdateDialog from "./LocationUpdateDialog";
+import TypeAddDialog from "./TypeAddDialog";
+import TypeUpdateDialog from "./TypeUpdateDialog";
 import WorningDialog from "../WorningDialog";
 import { useSnackbar } from "notistack";
 
@@ -36,13 +36,8 @@ const useStyles = makeStyles({
   }
 });
 
-export default function LocationTable({
-  locations,
-  deleteLocation,
-  addLocation,
-  updateLocation
-}) {
-  console.log(locations);
+export default function TypeTable({ types, deleteType, addType, updateType }) {
+  console.log(types);
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = React.useState(false);
   const [parameters, setParameters] = React.useState({});
@@ -85,12 +80,12 @@ export default function LocationTable({
         }
       });
     } else {
-      let location = {};
-      location.name = name;
-      location.number = number;
-      if (!!note) location.note = note;
+      let type = {};
+      type.name = name;
+      type.number = number;
+      if (!!note) type.note = note;
       try {
-        addLocation(location);
+        addType(type);
         setOpenAddDialog(false);
       } catch (err) {
         console.log({ err });
@@ -98,18 +93,18 @@ export default function LocationTable({
     }
   };
   const handleUpdate = (event, number, name, note, id) => {
-    let location = {};
-    location.id = id;
-    if (!!name) location.name = name;
-    if (!!number) location.number = number;
-    if (!!note) location.note = note;
-    updateLocation(location);
+    let type = {};
+    type.id = id;
+    if (!!name) type.name = name;
+    if (!!number) type.number = number;
+    if (!!note) type.note = note;
+    updateType(type);
     setOpenUpdateDialog(false);
   };
 
   const handleDeleteWorningClose = action => {
     setOpenWorning(false);
-    if (action === "submit") deleteLocation(parameters);
+    if (action === "submit") deleteType(parameters);
   };
 
   const handleDeleteWorningOpen = params => {
@@ -154,20 +149,20 @@ export default function LocationTable({
     )
   };
 
-  if (locations.columns && locations.columns.length > 0) {
-    locations.columns.push(editColumn);
-    locations.columns.push(deleteColumn);
+  if (types.columns && types.columns.length > 0) {
+    types.columns.push(editColumn);
+    types.columns.push(deleteColumn);
   }
 
-  const columns: ColDef[] = locations.columns ? locations.columns : [];
-  const rows = locations.rows ? locations.rows : [];
+  const columns: ColDef[] = types.columns ? types.columns : [];
+  const rows = types.rows ? types.rows : [];
 
   function CustomToolbar() {
     return (
       <GridToolbarContainer className={classes.toolbarContainer}>
         <div>
           <Typography variant="h5" gutterBottom>
-            Места производства
+            Типы изделий
           </Typography>
         </div>
         <div className={classes.tools}>
@@ -186,12 +181,12 @@ export default function LocationTable({
             </Fab>
           </Tooltip>
         </div>
-        <LocationAddDialog
+        <TypeAddDialog
           handleClose={handleAddDialogClose}
           handleCreate={handleCreate}
           open={openAddDialog}
         />
-        <LocationUpdateDialog
+        <TypeUpdateDialog
           handleClose={handleUpdateDialogClose}
           handleUpdate={handleUpdate}
           open={openUpdateDialog}
