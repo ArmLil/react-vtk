@@ -10,8 +10,8 @@ import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined"
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
-import TypeAddDialog from "./TypeAddDialog";
-import TypeUpdateDialog from "./TypeUpdateDialog";
+import NoteAddDialog from "./NoteAddDialog";
+import NoteUpdateDialog from "./NoteUpdateDialog";
 import WorningDialog from "../WorningDialog";
 import { useSnackbar } from "notistack";
 
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   }
 });
 
-export default function TypeTable({ types, deleteType, addType, updateType }) {
+export default function NoteTable({ notes, deleteNote, addNote, updateNote }) {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = React.useState(false);
   const [parameters, setParameters] = React.useState({});
@@ -49,11 +49,11 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     setOpenAddDialog(true);
   };
 
-  const handleAddDialogClose = (event, number, name, note) => {
+  const handleAddDialogClose = (event, name, description) => {
     setOpenAddDialog(false);
   };
 
-  const handleUpdateDialogClose = (event, number, name, note) => {
+  const handleUpdateDialogClose = (event, name, description) => {
     setOpenUpdateDialog(false);
   };
   const handleUpdateDialogOpen = params => {
@@ -61,17 +61,9 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     setOpenUpdateDialog(true);
   };
 
-  const handleCreate = (event, number, name, note, id) => {
-    if (!number || !name) {
-      enqueueSnackbar("Нобходимо заполнить поля Номер и Название", {
-        variant: "warning",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-    } else if (isNaN(Number(number))) {
-      enqueueSnackbar('В поле "номер" необходимо ввести число!', {
+  const handleCreate = (event, name, description, id) => {
+    if (!name) {
+      enqueueSnackbar("Нобходимо заполнить поле Название", {
         variant: "warning",
         anchorOrigin: {
           vertical: "top",
@@ -79,31 +71,29 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         }
       });
     } else {
-      let type = {};
-      type.name = name;
-      type.number = number;
-      if (!!note) type.note = note;
+      let note = {};
+      note.name = name;
+      if (!!description) note.description = description;
       try {
-        addType(type);
+        addNote(note);
         setOpenAddDialog(false);
       } catch (err) {
         console.log({ err });
       }
     }
   };
-  const handleUpdate = (event, number, name, note, id) => {
-    let type = {};
-    type.id = id;
-    if (!!name) type.name = name;
-    if (!!number) type.number = number;
-    if (!!note) type.note = note;
-    updateType(type);
+  const handleUpdate = (event, name, description, id) => {
+    let note = {};
+    note.id = id;
+    if (!!name) note.name = name;
+    if (!!note) note.description = description;
+    updateNote(description);
     setOpenUpdateDialog(false);
   };
 
   const handleDeleteWorningClose = action => {
     setOpenWorning(false);
-    if (action === "submit") deleteType(parameters);
+    if (action === "submit") deleteNote(parameters);
   };
 
   const handleDeleteWorningOpen = params => {
@@ -148,20 +138,20 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     )
   };
 
-  if (types.columns && types.columns.length > 0) {
-    types.columns.push(editColumn);
-    types.columns.push(deleteColumn);
+  if (notes.columns && notes.columns.length > 0) {
+    notes.columns.push(editColumn);
+    notes.columns.push(deleteColumn);
   }
 
-  const columns: ColDef[] = types.columns ? types.columns : [];
-  const rows = types.rows ? types.rows : [];
+  const columns: ColDef[] = notes.columns ? notes.columns : [];
+  const rows = notes.rows ? notes.rows : [];
 
   function CustomToolbar() {
     return (
       <GridToolbarContainer className={classes.toolbarContainer}>
         <div>
           <Typography variant="h5" gutterBottom>
-            Типы изделий
+            Примечания
           </Typography>
         </div>
         <div className={classes.tools}>
@@ -180,12 +170,12 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
             </Fab>
           </Tooltip>
         </div>
-        <TypeAddDialog
+        <NoteAddDialog
           handleClose={handleAddDialogClose}
           handleCreate={handleCreate}
           open={openAddDialog}
         />
-        <TypeUpdateDialog
+        <NoteUpdateDialog
           handleClose={handleUpdateDialogClose}
           handleUpdate={handleUpdate}
           open={openUpdateDialog}

@@ -10,8 +10,8 @@ import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined"
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
-import TypeAddDialog from "./TypeAddDialog";
-import TypeUpdateDialog from "./TypeUpdateDialog";
+import DecimalNumberAddDialog from "./DecimalNumberAddDialog";
+import DecimalNumberUpdateDialog from "./DecimalNumberUpdateDialog";
 import WorningDialog from "../WorningDialog";
 import { useSnackbar } from "notistack";
 
@@ -36,7 +36,12 @@ const useStyles = makeStyles({
   }
 });
 
-export default function TypeTable({ types, deleteType, addType, updateType }) {
+export default function DecimalNumberTable({
+  decimalNumbers,
+  deleteDecimalNumber,
+  addDecimalNumber,
+  updateDecimalNumber
+}) {
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = React.useState(false);
   const [parameters, setParameters] = React.useState({});
@@ -49,11 +54,11 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     setOpenAddDialog(true);
   };
 
-  const handleAddDialogClose = (event, number, name, note) => {
+  const handleAddDialogClose = (event, name, note) => {
     setOpenAddDialog(false);
   };
 
-  const handleUpdateDialogClose = (event, number, name, note) => {
+  const handleUpdateDialogClose = (event, name, note) => {
     setOpenUpdateDialog(false);
   };
   const handleUpdateDialogOpen = params => {
@@ -61,17 +66,9 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     setOpenUpdateDialog(true);
   };
 
-  const handleCreate = (event, number, name, note, id) => {
-    if (!number || !name) {
-      enqueueSnackbar("Нобходимо заполнить поля Номер и Название", {
-        variant: "warning",
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "center"
-        }
-      });
-    } else if (isNaN(Number(number))) {
-      enqueueSnackbar('В поле "номер" необходимо ввести число!', {
+  const handleCreate = (event, name, note, id) => {
+    if (!name) {
+      enqueueSnackbar("Нобходимо заполнить поле Название", {
         variant: "warning",
         anchorOrigin: {
           vertical: "top",
@@ -79,31 +76,29 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         }
       });
     } else {
-      let type = {};
-      type.name = name;
-      type.number = number;
-      if (!!note) type.note = note;
+      let decimalNumber = {};
+      decimalNumber.name = name;
+      if (!!note) decimalNumber.note = note;
       try {
-        addType(type);
+        addDecimalNumber(decimalNumber);
         setOpenAddDialog(false);
       } catch (err) {
         console.log({ err });
       }
     }
   };
-  const handleUpdate = (event, number, name, note, id) => {
-    let type = {};
-    type.id = id;
-    if (!!name) type.name = name;
-    if (!!number) type.number = number;
-    if (!!note) type.note = note;
-    updateType(type);
+  const handleUpdate = (event, name, note, id) => {
+    let decimalNumber = {};
+    decimalNumber.id = id;
+    if (!!name) decimalNumber.name = name;
+    if (!!note) decimalNumber.note = note;
+    updateDecimalNumber(decimalNumber);
     setOpenUpdateDialog(false);
   };
 
   const handleDeleteWorningClose = action => {
     setOpenWorning(false);
-    if (action === "submit") deleteType(parameters);
+    if (action === "submit") deleteDecimalNumber(parameters);
   };
 
   const handleDeleteWorningOpen = params => {
@@ -123,7 +118,6 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         color="primary"
         className={classes.iconButton}
         onClick={() => {
-          console.log({ params });
           handleUpdateDialogOpen(params);
         }}
       >
@@ -148,20 +142,22 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     )
   };
 
-  if (types.columns && types.columns.length > 0) {
-    types.columns.push(editColumn);
-    types.columns.push(deleteColumn);
+  if (decimalNumbers.columns && decimalNumbers.columns.length > 0) {
+    decimalNumbers.columns.push(editColumn);
+    decimalNumbers.columns.push(deleteColumn);
   }
 
-  const columns: ColDef[] = types.columns ? types.columns : [];
-  const rows = types.rows ? types.rows : [];
+  const columns: ColDef[] = decimalNumbers.columns
+    ? decimalNumbers.columns
+    : [];
+  const rows = decimalNumbers.rows ? decimalNumbers.rows : [];
 
   function CustomToolbar() {
     return (
       <GridToolbarContainer className={classes.toolbarContainer}>
         <div>
           <Typography variant="h5" gutterBottom>
-            Типы изделий
+            Децимальные номера
           </Typography>
         </div>
         <div className={classes.tools}>
@@ -180,12 +176,12 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
             </Fab>
           </Tooltip>
         </div>
-        <TypeAddDialog
+        <DecimalNumberAddDialog
           handleClose={handleAddDialogClose}
           handleCreate={handleCreate}
           open={openAddDialog}
         />
-        <TypeUpdateDialog
+        <DecimalNumberUpdateDialog
           handleClose={handleUpdateDialogClose}
           handleUpdate={handleUpdate}
           open={openUpdateDialog}

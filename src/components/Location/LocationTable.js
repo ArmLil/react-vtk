@@ -42,7 +42,6 @@ export default function LocationTable({
   addLocation,
   updateLocation
 }) {
-  console.log(locations);
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = React.useState(false);
   const [parameters, setParameters] = React.useState({});
