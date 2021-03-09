@@ -3,10 +3,10 @@ import React, { Component } from "react";
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 
 import Locations from "../containers/Locations";
-import NamingTable from "./NamingTable.js";
 import ProductsTable from "./ProductsTable.js";
 import DecimalNumbers from "../containers/DecimalNumbers.js";
 import Employees from "../containers/Employees.js";
+import Namings from "../containers/Namings.js";
 import Notes from "../containers/Notes.js";
 import Types from "../containers/Types.js";
 
@@ -19,7 +19,7 @@ class TableRoutes extends Component {
         <Switch>
           <Route history={history} path="/products" component={ProductsTable} />
           <Route history={history} path="/locations" component={Locations} />
-          <Route history={history} path="/namings" component={NamingTable} />
+          <Route history={history} path="/namings" component={Namings} />
           <Route history={history} path="/employees" component={Employees} />
           <Route
             history={history}
