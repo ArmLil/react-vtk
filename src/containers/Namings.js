@@ -64,7 +64,7 @@ const Naming = () => {
         default:
           break;
       }
-      if (data.namings.count > 0 && item !== "deletedAt" && item !== "type") {
+      if (data.namings.count > 0 && item !== "deletedAt" && item !== "typeId") {
         columns.push(obj);
       }
     });
