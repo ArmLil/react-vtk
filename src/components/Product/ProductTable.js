@@ -121,21 +121,15 @@ export default function ProductTable({
   };
 
   const handleCreate = (event, product) => {
-    if (!product.namingId)
-      showNotification(
-        "Необходимо выбрать Наименование, заранее создавая их в списке <<Наименования>>."
-      );
-    else if (!product.decimalNumberId)
-      showNotification(
-        "Необходимо выбрать Децимальный номер, заранее создавая их в списке <<Децимальные номера>>."
-      );
+    if (!product.namingId) showNotification("Необходимо выбрать Наименование.");
+    // else if (!product.decimalNumberId)
+    //   showNotification(
+    //     "Необходимо выбрать Децимальный номер."
+    //   );
     else if (!product.locationId)
-      showNotification(
-        "Необходимо выбрать Место производства, заранее создавая их в списке <<Места производства>>."
-      );
+      showNotification("Необходимо выбрать Место производства.");
     else {
       addProduct(product);
-      console.log({ product });
       setOpenAddDialog(false);
     }
   };

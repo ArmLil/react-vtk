@@ -65,6 +65,7 @@ export default function NamingAddDialog({
           />
           <SelectTextField
             items={namings}
+            required={true}
             needId={true}
             title="Наименование"
             getItem={item => {
