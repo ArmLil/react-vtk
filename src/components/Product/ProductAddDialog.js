@@ -55,7 +55,7 @@ export default function NamingAddDialog({
     >
       <DialogTitle id="form-dialog-title">Изделия</DialogTitle>
       <DialogContent>
-        <DialogContentText>Пожалуйста, заполните поля</DialogContentText>
+        <DialogContentText>Пожалуйста, заполните поля!</DialogContentText>
         <form className={classes.root} noValidate autoComplete="off">
           <TextField
             id="standard-multiline-number"
@@ -68,6 +68,7 @@ export default function NamingAddDialog({
             required={true}
             needId={true}
             title="Наименование"
+            value={""}
             getItem={item => {
               setProduct(Object.assign(product, { namingId: item }));
             }}
@@ -76,6 +77,7 @@ export default function NamingAddDialog({
             items={decimalNumbers}
             needId={true}
             title="Децимальный номер"
+            value={""}
             getItem={item => {
               setProduct(Object.assign(product, { decimalNumberId: item }));
             }}
@@ -84,6 +86,7 @@ export default function NamingAddDialog({
             items={locations}
             needId={true}
             title="Место производства"
+            value={""}
             getItem={item => {
               setProduct(Object.assign(product, { locationId: item }));
             }}
@@ -92,6 +95,7 @@ export default function NamingAddDialog({
             items={notes}
             needId={true}
             title="Примечание"
+            value={""}
             getItem={item => {
               setProduct(Object.assign(product, { noteId: item }));
             }}
@@ -100,8 +104,9 @@ export default function NamingAddDialog({
             items={employees}
             needId={true}
             title="Сотрудники"
+            value={""}
             getItem={item => {
-              setProduct(Object.assign(product, { noteId: item }));
+              setProduct(Object.assign(product, { employeeId: item }));
             }}
           />
           <TextField

@@ -15,29 +15,39 @@ const Product = () => {
       setProducts(productsFromServer);
     };
     getProducts();
-  }, []);
+  });
 
   // Fetch Products
   const fetchProducts = async () => {
     const res = await fetch("http://localhost:3001/api/v1/products");
     const data = await res.json();
     let columns = [];
-    let rows = data.products.rows.slice(0);
-    let products = {};
+    let rows = [];
 
-    products.rows = rows.map(row => {
-      row.createdAt = moment(row.createdAt).format("YYYY.MM.DD HH:mm");
-      row.updatedAt = moment(row.updatedAt).format("YYYY.MM.DD HH:mm");
-      row.typeNumber = row.type.number;
-      row.type = row.type.name;
-      if (row.naming) row.naming = row.naming.name;
-      if (row.decimalNumber) row.decimalNumber = row.decimalNumber.name;
-      row.locationNumber = row.location.number;
-      if (row.location) row.location = row.location.name;
-      if (row.note) row.note = row.note.name;
-      if (row.employee) row.employee = row.employee.name;
-      return row;
+    data.products.rows.forEach(row => {
+      let rowObj = {};
+      rowObj.createdAt = moment(row.createdAt).format("YYYY.MM.DD HH:mm");
+      rowObj.updatedAt = moment(row.updatedAt).format("YYYY.MM.DD HH:mm");
+      if (row.type) {
+        rowObj.typeNumber = row.type.number;
+        rowObj.type = row.type.name;
+      } else {
+        rowObj.typeNumber = "";
+      }
+      if (row.naming) rowObj.naming = row.naming.name;
+      if (row.decimalNumber) rowObj.decimalNumber = row.decimalNumber.name;
+      if (row.location) {
+        rowObj.location = row.location.name;
+        rowObj.locationNumber = row.location.number;
+      } else {
+        rowObj.locationNumber = "";
+      }
+      if (row.note) rowObj.note = row.note.name;
+      if (row.employee) rowObj.employee = row.employee.name;
+      rowObj = Object.assign({}, row, rowObj);
+      rows.push(rowObj);
     });
+    products.rows = rows;
     let locColumns = [];
     if (data.products.count > 0)
       locColumns = Object.keys(data.products.rows[0]);
@@ -81,7 +91,7 @@ const Product = () => {
           obj.field = item;
           obj.flex = 0.3;
           obj.renderCell = (params: CellParams) => (
-            <Tooltip title={params.row.location} placement="bottom">
+            <Tooltip title={params.row.location || ""} placement="bottom">
               <Button style={{ textTransform: "lowercase" }}>
                 {params.row.locationNumber}
               </Button>
@@ -93,7 +103,7 @@ const Product = () => {
           obj.field = item;
           obj.flex = 0.3;
           obj.renderCell = (params: CellParams) => (
-            <Tooltip title={params.row.type} placement="bottom">
+            <Tooltip title={params.row.type || ""} placement="bottom">
               <Button style={{ textTransform: "lowercase" }}>
                 {params.row.typeNumber}
               </Button>
@@ -188,7 +198,6 @@ const Product = () => {
       if (data["Bad Request"]) throw new Error(data["Bad Request"]);
       if (data["errorMessage"]) throw new Error(data["errorMessage"]);
       let newRows = [];
-      console.log({ data });
       if (products.columns.length > 0) {
         data.product.createdAt = moment(data.product.createdAt).format(
           "YYYY.MM.DD HH:mm"
@@ -233,6 +242,7 @@ const Product = () => {
       );
 
       const data = await res.json();
+      console.log({ data });
       if (data["Bad Request"]) throw new Error(data["Bad Request"]);
       if (data["errorMessage"]) throw new Error(data["errorMessage"]);
       data.product.createdAt = moment(data.product.createdAt).format(
@@ -242,10 +252,10 @@ const Product = () => {
         "YYYY.MM.DD HH:mm"
       );
       let newRows = [];
-      data.product.type = data.product.type.name;
+
       if (products.columns.length > 0) {
-        newRows = products.rows.map(loc =>
-          loc.id === product.id ? data.product : loc
+        newRows = products.rows.map(prod =>
+          prod.id === product.id ? data.product : prod
         );
         let newProducts = Object.assign(
           {},

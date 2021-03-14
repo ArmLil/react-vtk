@@ -8,9 +8,10 @@ export default function SelectTextField({
   getItem,
   title,
   needId,
-  required
+  required,
+  value
 }) {
-  const [item, setItem] = React.useState("");
+  const [item, setItem] = React.useState(value);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     getItem(event.target.value);
@@ -49,7 +50,7 @@ export default function SelectTextField({
     >
       {[...items, { id: 0, name: null }].map(option => (
         <MenuItem key={option.id} value={needId ? option.id : option.name}>
-          {option.name ? option.name : "NONE"}
+          {option.name ? option.name : " "}
         </MenuItem>
       ))}
     </TextField>

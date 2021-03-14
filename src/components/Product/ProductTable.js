@@ -64,49 +64,47 @@ export default function ProductTable({
 
   const classes = useStyles();
 
-  const handleAddDialogOpen = async () => {
-    if (namings.length === 0) {
+  React.useEffect(() => {
+    const setItemsStates = async () => {
       const resNamings = await fetch("http://localhost:3001/api/v1/namings");
       const dataNamings = await resNamings.json();
       setNamings(dataNamings.namings.rows);
-    }
-    if (decimalNumbers.length === 0) {
+
       const resDecimalNumbers = await fetch(
         "http://localhost:3001/api/v1/decimalNumbers"
       );
       const dataDecimalNumbers = await resDecimalNumbers.json();
       setDecimalNumbers(dataDecimalNumbers.decimalNumbers.rows);
-    }
-    if (locations.length === 0) {
+
       const resLocations = await fetch(
         "http://localhost:3001/api/v1/locations"
       );
       const dataLocations = await resLocations.json();
       setLocations(dataLocations.locations.rows);
-    }
-    if (notes.length === 0) {
+
       const resNotes = await fetch("http://localhost:3001/api/v1/notes");
       const dataNotes = await resNotes.json();
       setNotes(dataNotes.notes.rows);
-    }
-    if (employees.length === 0) {
+
       const resEmployees = await fetch(
         "http://localhost:3001/api/v1/employees"
       );
       const dataEmployees = await resEmployees.json();
       setEmployees(dataEmployees.employees.rows);
-    }
+    };
+    setItemsStates();
+  }, []);
 
+  const handleAddDialogOpen = async () => {
     setOpenAddDialog(true);
   };
 
-  const handleUpdateDialogClose = () => {
-    setOpenUpdateDialog(false);
-  };
   const handleUpdateDialogOpen = async params => {
-    // const res = await fetch("http://localhost:3001/api/v1/types");
-    // const data = await res.json();
-    setParameters(Object.assign({}, params.row));
+    let _params = Object.assign({}, params.row);
+    for (let param in _params) {
+      if (_params[param] === null) _params[param] = "";
+    }
+    setParameters(Object.assign({}, _params));
     setOpenUpdateDialog(true);
   };
 
@@ -122,10 +120,6 @@ export default function ProductTable({
 
   const handleCreate = (event, product) => {
     if (!product.namingId) showNotification("Необходимо выбрать Наименование.");
-    // else if (!product.decimalNumberId)
-    //   showNotification(
-    //     "Необходимо выбрать Децимальный номер."
-    //   );
     else if (!product.locationId)
       showNotification("Необходимо выбрать Место производства.");
     else {
@@ -134,12 +128,8 @@ export default function ProductTable({
     }
   };
 
-  const handleUpdate = (event, name, note, id) => {
-    let product = {};
-    product.id = id;
-    if (!!name) product.name = name;
-    if (!!note) product.note = note;
-    // if (!!note) product.type = type;
+  const handleUpdate = (event, product) => {
+    console.log({ product });
     updateProduct(product);
     setOpenUpdateDialog(false);
   };
@@ -233,11 +223,15 @@ export default function ProductTable({
           employees={employees}
         />
         <ProductUpdateDialog
-          handleClose={handleUpdateDialogClose}
+          handleClose={() => setOpenUpdateDialog(false)}
           handleUpdate={handleUpdate}
           open={openUpdateDialog}
           params={parameters}
-          // types={types}
+          namings={namings}
+          locations={locations}
+          decimalNumbers={decimalNumbers}
+          notes={notes}
+          employees={employees}
         />
         <WorningDialog
           openWorning={openWorning}
