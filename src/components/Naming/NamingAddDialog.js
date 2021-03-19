@@ -8,6 +8,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import MenuItem from "@material-ui/core/MenuItem";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,6 +42,18 @@ export default function NamingAddDialog({
     setType(event.target.value);
   };
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  const showNotification = text => {
+    enqueueSnackbar(text, {
+      variant: "warning",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center"
+      }
+    });
+  };
+
   return (
     <Dialog
       open={open}
@@ -66,6 +79,13 @@ export default function NamingAddDialog({
             label="Тип"
             value={type}
             onChange={handleChangeType}
+            onClick={e => {
+              if (types.length === 0) {
+                showNotification(
+                  `Чтобы выбрать тип, необходимо заранее создавать их в соответствующем списке.`
+                );
+              }
+            }}
             helperText="Выберите тип"
           >
             {types.map(option => {

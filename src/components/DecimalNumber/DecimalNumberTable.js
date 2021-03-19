@@ -20,6 +20,14 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column"
   },
+  tableContainer: {
+    display: "flex",
+    height: "85vh",
+    width: "100%",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    fontSize: "18px"
+  },
   tools: {
     width: "100%",
     paddingLeft: 20,
@@ -32,6 +40,15 @@ const useStyles = makeStyles({
   iconButton: {
     "&:hover": {
       backgroundColor: "#bdbdbd"
+    }
+  },
+  root: {
+    "& .MuiDataGrid-columnsContainer": {
+      backgroundColor: "#e8eaf6",
+      border: "#bdbdbd solid 1px"
+    },
+    "& .MuiDataGrid-colCellTitle": {
+      fontWeight: "bold"
     }
   }
 });
@@ -196,17 +213,9 @@ export default function DecimalNumberTable({
     );
   }
   return (
-    <div
-      style={{
-        display: "flex",
-        height: 700,
-        width: "100%",
-        justifyContent: "space-between",
-        flexGrow: 1,
-        fontSize: "18px"
-      }}
-    >
+    <div className={classes.tableContainer}>
       <XGrid
+        className={classes.root}
         localeText={russian}
         rowHeight={50}
         pageSize={20}

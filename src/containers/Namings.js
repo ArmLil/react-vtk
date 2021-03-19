@@ -33,6 +33,7 @@ const Naming = () => {
       let obj = {};
       switch (item) {
         case "id":
+          obj.hide = true;
           obj.headerName = "ID";
           obj.field = item;
           break;

@@ -1,6 +1,7 @@
 import PersistentDrawerLeft from "./containers/AppBar.js";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { SnackbarProvider } from "notistack";
+import indigo from "@material-ui/core/colors/indigo";
 
 function App() {
   const theme = createMuiTheme({

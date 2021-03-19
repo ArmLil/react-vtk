@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
   tableContainer: {
     display: "flex",
-    height: 900,
+    height: "85vh",
     width: "100%",
     justifyContent: "space-between",
     flexGrow: 0.5,
@@ -41,6 +41,15 @@ const useStyles = makeStyles({
   iconButton: {
     "&:hover": {
       backgroundColor: "#bdbdbd"
+    }
+  },
+  root: {
+    "& .MuiDataGrid-columnsContainer": {
+      backgroundColor: "#e8eaf6",
+      border: "#bdbdbd solid 1px"
+    },
+    "& .MuiDataGrid-colCellTitle": {
+      fontWeight: "bold"
     }
   }
 });
@@ -224,6 +233,7 @@ export default function NamingTable({
   return (
     <div className={classes.tableContainer}>
       <XGrid
+        className={classes.root}
         localeText={russian}
         rowHeight={50}
         pageSize={20}

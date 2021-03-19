@@ -17,7 +17,7 @@ import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles({
   toolbarContainer: {
-    display: "flex",
+    // display: "flex",
     flexDirection: "column"
   },
   tools: {
@@ -29,9 +29,26 @@ const useStyles = makeStyles({
     flexDirection: "row",
     justifyContent: "space-between"
   },
+  tableContainer: {
+    display: "flex",
+    height: "85vh",
+    width: "100%",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    fontSize: "18px"
+  },
   iconButton: {
     "&:hover": {
       backgroundColor: "#bdbdbd"
+    }
+  },
+  root: {
+    "& .MuiDataGrid-columnsContainer": {
+      backgroundColor: "#e8eaf6",
+      border: "#bdbdbd solid 1px"
+    },
+    "& .MuiDataGrid-colCellTitle": {
+      fontWeight: "bold"
     }
   }
 });
@@ -200,17 +217,9 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     );
   }
   return (
-    <div
-      style={{
-        display: "flex",
-        height: 700,
-        width: "100%",
-        justifyContent: "space-between",
-        flexGrow: 1,
-        fontSize: "18px"
-      }}
-    >
+    <div className={classes.tableContainer}>
       <XGrid
+        className={classes.root}
         localeText={russian}
         rowHeight={50}
         pageSize={20}
@@ -224,7 +233,7 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         disableColumnMenu={true}
         showColumnRightBorder={true}
         showCellRightBorder={true}
-        disableExtendRowFullWidth={true}
+        disableExtendRowFullWidth={false}
         components={{
           Toolbar: CustomToolbar
         }}

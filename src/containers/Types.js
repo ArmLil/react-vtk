@@ -28,12 +28,15 @@ const Type = () => {
       let obj = {};
       switch (item) {
         case "id":
+          obj.hide = true;
           obj.headerName = "ID";
           obj.field = item;
           break;
         case "number":
           obj.headerName = "Номер";
           obj.field = item;
+          obj.flex = 0.15;
+          obj.headerClassName = "super-app-theme--header";
           break;
         case "name":
           obj.headerName = "Название";
@@ -43,12 +46,12 @@ const Type = () => {
         case "createdAt":
           obj.headerName = "Дата создания";
           obj.field = item;
-          obj.flex = 0.2;
+          obj.flex = 0.25;
           break;
         case "updatedAt":
           obj.headerName = "Дата редактирования";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.25;
           break;
         case "note":
           obj.headerName = "Примечание";
