@@ -28,10 +28,12 @@ export default function NamingUpdateDialog({
   types
 }) {
   const classes = useStyles();
-  const [name, setName] = React.useState(params.name);
-  const [decimalNumber, setDecimalNumber] = React.useState(params.name);
-  const [note, setNote] = React.useState(params.note);
-  const [type, setType] = React.useState(params.type);
+  const [name, setName] = React.useState(params.name || "");
+  const [decimalNumber, setDecimalNumber] = React.useState(
+    params.decimalNumber || ""
+  );
+  const [note, setNote] = React.useState(params.note || "");
+  const [type, setType] = React.useState(params.type || "");
 
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -107,7 +109,9 @@ export default function NamingUpdateDialog({
           Отменить
         </Button>
         <Button
-          onClick={ev => handleUpdate(ev, name, note, type, params.id)}
+          onClick={ev =>
+            handleUpdate(ev, name, decimalNumber, note, type, params.id)
+          }
           color="primary"
         >
           Редактировать

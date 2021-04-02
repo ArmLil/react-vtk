@@ -2,8 +2,6 @@ import * as React from "react";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/Add";
-import Fab from "@material-ui/core/Fab";
 import { GridToolbarContainer, GridToolbar } from "@material-ui/x-grid";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
@@ -13,6 +11,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import TypeAddDialog from "./TypeAddDialog";
 import TypeUpdateDialog from "./TypeUpdateDialog";
 import WorningDialog from "../WorningDialog";
+import Button from "@material-ui/core/Button";
 import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles({
@@ -132,7 +131,7 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     field: "edit",
     headerName: "Редактировать",
     sortable: false,
-
+    flex: 0.15,
     width: 135,
     renderCell: (params: CellParams) => (
       <IconButton
@@ -152,6 +151,7 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
     field: "delete",
     headerName: "Удалить",
     sortable: false,
+    flex: 0.15,
     renderCell: (params: CellParams) => (
       <IconButton
         aria-label="delete"
@@ -182,19 +182,19 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         </div>
         <div className={classes.tools}>
           <div>
+            <Tooltip title="Создать новый элемент">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddDialogOpen}
+              >
+                Создать
+              </Button>
+            </Tooltip>
+          </div>
+          <div>
             <GridToolbar />
           </div>
-          <Tooltip title="Создать">
-            <Fab
-              size="medium"
-              color="primary"
-              aria-label="add"
-              className={classes.add}
-              onClick={handleAddDialogOpen}
-            >
-              <AddIcon />
-            </Fab>
-          </Tooltip>
         </div>
         <TypeAddDialog
           handleClose={handleAddDialogClose}

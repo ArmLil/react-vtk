@@ -2,8 +2,6 @@ import * as React from "react";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/Add";
-import Fab from "@material-ui/core/Fab";
 import { GridToolbarContainer, GridToolbar } from "@material-ui/x-grid";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
@@ -13,6 +11,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import LocationAddDialog from "./LocationAddDialog";
 import LocationUpdateDialog from "./LocationUpdateDialog";
 import WorningDialog from "../WorningDialog";
+import Button from "@material-ui/core/Button";
 import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles({
@@ -88,15 +87,15 @@ export default function LocationTable({
   };
 
   const handleCreate = (event, number, name, note, id) => {
-    if (!number || !name) {
-      enqueueSnackbar("Нобходимо заполнить поля Номер и Название", {
+    if (!name) {
+      enqueueSnackbar("Нобходимо заполнить поле Название", {
         variant: "warning",
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
         }
       });
-    } else if (isNaN(Number(number))) {
+    } else if (number && isNaN(Number(number))) {
       enqueueSnackbar('В поле "номер" необходимо ввести число!', {
         variant: "warning",
         anchorOrigin: {
@@ -107,7 +106,7 @@ export default function LocationTable({
     } else {
       let location = {};
       location.name = name;
-      location.number = number;
+      if (!!number) location.number = number;
       if (!!note) location.note = note;
       try {
         addLocation(location);
@@ -141,7 +140,7 @@ export default function LocationTable({
     field: "edit",
     headerName: "Редактировать",
     sortable: false,
-
+    flex: 0.15,
     width: 135,
     renderCell: (params: CellParams) => (
       <IconButton
@@ -162,6 +161,7 @@ export default function LocationTable({
     field: "delete",
     headerName: "Удалить",
     sortable: false,
+    flex: 0.15,
     renderCell: (params: CellParams) => (
       <IconButton
         aria-label="delete"
@@ -191,20 +191,19 @@ export default function LocationTable({
           </Typography>
         </div>
         <div className={classes.tools}>
-          <div>
-            <GridToolbar />
-          </div>
-          <Tooltip title="Создать">
-            <Fab
-              size="medium"
+          <Tooltip title="Создать новый элемент">
+            <Button
+              variant="contained"
               color="primary"
-              aria-label="add"
               className={classes.add}
               onClick={handleAddDialogOpen}
             >
-              <AddIcon />
-            </Fab>
+              Создать
+            </Button>
           </Tooltip>
+          <div>
+            <GridToolbar />
+          </div>
         </div>
         <LocationAddDialog
           handleClose={handleAddDialogClose}

@@ -125,7 +125,7 @@ export default function NamingAddDialog({
           Отменить
         </Button>
         <Button
-          onClick={ev => handleCreate(ev, name, note, type)}
+          onClick={ev => handleCreate(ev, decimalNumber, name, note, type)}
           color="primary"
         >
           Создать

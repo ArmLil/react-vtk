@@ -2,8 +2,6 @@ import * as React from "react";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/Add";
-import Fab from "@material-ui/core/Fab";
 import { GridToolbarContainer, GridToolbar } from "@material-ui/x-grid";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
@@ -13,6 +11,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import NamingAddDialog from "./NamingAddDialog";
 import NamingUpdateDialog from "./NamingUpdateDialog";
 import WorningDialog from "../WorningDialog";
+import Button from "@material-ui/core/Button";
 import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles({
@@ -91,7 +90,7 @@ export default function NamingTable({
     setOpenUpdateDialog(true);
   };
 
-  const handleCreate = (event, name, note, type, decimalNumber) => {
+  const handleCreate = (event, decimalNumber, name, note, type) => {
     if (!name) {
       enqueueSnackbar("Необходимо заполнить поле Название", {
         variant: "warning",
@@ -116,17 +115,19 @@ export default function NamingTable({
       naming.name = name;
       if (!!note) naming.note = note;
       if (!!type) naming.type = type;
+      if (!!decimalNumber) naming.decimalNumber = decimalNumber;
       addNaming(naming);
       setOpenAddDialog(false);
     }
   };
 
-  const handleUpdate = (event, name, note, type, id) => {
+  const handleUpdate = (ev, name, decimalNumber, note, type, id) => {
     let naming = {};
     naming.id = id;
     if (!!name) naming.name = name;
+    if (!!decimalNumber) naming.decimalNumber = decimalNumber;
     if (!!note) naming.note = note;
-    if (!!note) naming.type = type;
+    if (!!type) naming.type = type;
     updateNaming(naming);
     setOpenUpdateDialog(false);
   };
@@ -145,7 +146,7 @@ export default function NamingTable({
     field: "edit",
     headerName: "Редактировать",
     sortable: false,
-
+    flex: 0.15,
     width: 135,
     renderCell: (params: CellParams) => (
       <IconButton
@@ -165,6 +166,7 @@ export default function NamingTable({
     field: "delete",
     headerName: "Удалить",
     sortable: false,
+    flex: 0.15,
     renderCell: (params: CellParams) => (
       <IconButton
         aria-label="delete"
@@ -194,20 +196,19 @@ export default function NamingTable({
           </Typography>
         </div>
         <div className={classes.tools}>
+          <Tooltip title="Создать новый элемент">
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.add}
+              onClick={handleAddDialogOpen}
+            >
+              Создать
+            </Button>
+          </Tooltip>
           <div>
             <GridToolbar />
           </div>
-          <Tooltip title="Создать">
-            <Fab
-              size="medium"
-              color="primary"
-              aria-label="add"
-              className={classes.add}
-              onClick={() => handleAddDialogOpen()}
-            >
-              <AddIcon />
-            </Fab>
-          </Tooltip>
         </div>
         <NamingAddDialog
           handleClose={handleAddDialogClose}
@@ -253,7 +254,7 @@ export default function NamingTable({
         }}
         sortModel={[
           {
-            field: "name",
+            field: "createdAt",
             sort: "asc"
           }
         ]}

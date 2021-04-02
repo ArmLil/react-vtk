@@ -69,7 +69,8 @@ const Location = () => {
                     textTransform: "lowercase",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
+                    fontSize: 14
                   }}
                 >
                   {params.row.note}

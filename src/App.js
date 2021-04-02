@@ -8,7 +8,10 @@ function App() {
     typography: {
       // In Chinese and Japanese the characters are usually larger,
       // so a smaller fontsize may be appropriate.
-      fontSize: 14
+      fontSize: 14,
+      button: {
+        fontSize: "0.7rem"
+      }
     }
   });
   return (
