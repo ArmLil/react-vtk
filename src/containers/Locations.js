@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSnackbar } from "notistack";
+import Tooltip from "@material-ui/core/Tooltip";
+import Button from "@material-ui/core/Button";
 import LocationTable from "../components/Location/LocationTable";
 var moment = require("moment");
 
@@ -31,10 +33,12 @@ const Location = () => {
         case "id":
           obj.headerName = "ID";
           obj.field = item;
+          obj.hide = true;
           break;
         case "number":
           obj.headerName = "Номер";
           obj.field = item;
+          obj.flex = 0.1;
           break;
         case "name":
           obj.headerName = "Название";
@@ -49,12 +53,30 @@ const Location = () => {
         case "updatedAt":
           obj.headerName = "Дата редактирования";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.2;
           break;
         case "note":
           obj.headerName = "Примечание";
           obj.field = item;
           obj.flex = 0.4;
+          obj.renderCell = (params: CellParams) => (
+            <Tooltip title={params.row.note || ""} placement="bottom">
+              <Button>
+                <div
+                  style={{
+                    display: "block",
+                    textAlign: "left",
+                    textTransform: "lowercase",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  {params.row.note}
+                </div>
+              </Button>
+            </Tooltip>
+          );
           break;
         default:
           break;

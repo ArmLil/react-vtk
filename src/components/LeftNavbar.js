@@ -6,10 +6,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import PinDrop from "@material-ui/icons/PinDrop";
-import FormatSize from "@material-ui/icons/FormatSize";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import MergeTypeIcon from "@material-ui/icons/MergeType";
-import DescriptionIcon from "@material-ui/icons/Description";
 import Toc from "@material-ui/icons/Toc";
 import { Link } from "react-router-dom";
 
@@ -44,17 +42,6 @@ export default function LeftNavbar() {
           <ListItemText primary="Наименования" />
         </ListItem>
       </Link>
-      <Link
-        to={"/decimalNumbers"}
-        style={{ textDecoration: "none", color: "black" }}
-      >
-        <ListItem button key="Децимальные номера">
-          <ListItemIcon>
-            <FormatSize />
-          </ListItemIcon>
-          <ListItemText primary="Децимальные номера" />
-        </ListItem>
-      </Link>
       <Link to={"/types"} style={{ textDecoration: "none", color: "black" }}>
         <ListItem button key="Типы изделий">
           <ListItemIcon>
@@ -72,14 +59,6 @@ export default function LeftNavbar() {
             <AssignmentIndIcon />
           </ListItemIcon>
           <ListItemText primary="Сотрудники" />
-        </ListItem>
-      </Link>
-      <Link to={"/notes"} style={{ textDecoration: "none", color: "black" }}>
-        <ListItem button key="Примечания">
-          <ListItemIcon>
-            <DescriptionIcon />
-          </ListItemIcon>
-          <ListItemText primary="Примечания" />
         </ListItem>
       </Link>
     </List>

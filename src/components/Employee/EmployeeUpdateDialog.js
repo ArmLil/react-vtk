@@ -28,9 +28,25 @@ export default function EmployeeUpdateDialog({
   const classes = useStyles();
   const [name, setName] = React.useState(params.name);
   const [note, setNote] = React.useState(params.note);
+  const [secondName, setSecondName] = React.useState(params.secondName);
+  const [fatherName, setFatherName] = React.useState(params.fatherName);
+
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
+
+  const handleChangeSecondName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSecondName(event.target.value);
+  };
+
+  const handleChangeFatherName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFatherName(event.target.value);
+  };
+
   const handleChangeNote = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNote(event.target.value);
   };
@@ -50,11 +66,28 @@ export default function EmployeeUpdateDialog({
           <TextField
             id="standard-multiline-name"
             required
-            label="Название"
+            label="Имя"
             multiline
             rowsMax={4}
             value={name}
             onChange={handleChangeName}
+          />
+          <TextField
+            id="standard-multiline-secondName"
+            required
+            label="Фамилия"
+            multiline
+            rowsMax={4}
+            value={secondName}
+            onChange={handleChangeSecondName}
+          />
+          <TextField
+            id="standard-multiline-fatherName"
+            label="Отчество"
+            multiline
+            rowsMax={4}
+            value={fatherName}
+            onChange={handleChangeFatherName}
           />
           <TextField
             id="standard-multiline-note"
@@ -71,7 +104,9 @@ export default function EmployeeUpdateDialog({
           Отменить
         </Button>
         <Button
-          onClick={ev => handleUpdate(ev, name, note, params.id)}
+          onClick={ev =>
+            handleUpdate(ev, name, secondName, fatherName, note, params.id)
+          }
           color="primary"
         >
           Редактировать

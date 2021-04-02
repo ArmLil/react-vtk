@@ -22,9 +22,24 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function EmployeeAddDialog({ handleCreate, handleClose, open }) {
   const classes = useStyles();
   const [name, setName] = React.useState("");
+  const [secondName, setSecondName] = React.useState("");
+  const [fatherName, setFatherName] = React.useState("");
   const [note, setNote] = React.useState("");
+
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+  };
+
+  const handleChangeSecondName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSecondName(event.target.value);
+  };
+
+  const handleChangeFatherName = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFatherName(event.target.value);
   };
   const handleChangeNote = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNote(event.target.value);
@@ -43,11 +58,28 @@ export default function EmployeeAddDialog({ handleCreate, handleClose, open }) {
           <TextField
             id="standard-multiline-name"
             required
-            label="Название"
+            label="Имя"
             multiline
             rowsMax={4}
             value={name}
             onChange={handleChangeName}
+          />
+          <TextField
+            id="standard-multiline-seconName"
+            required
+            label="Фамилия"
+            multiline
+            rowsMax={4}
+            value={secondName}
+            onChange={handleChangeSecondName}
+          />
+          <TextField
+            id="standard-multiline-fatherName"
+            label="Отчество"
+            multiline
+            rowsMax={4}
+            value={fatherName}
+            onChange={handleChangeFatherName}
           />
           <TextField
             id="standard-multiline-note"
@@ -63,7 +95,10 @@ export default function EmployeeAddDialog({ handleCreate, handleClose, open }) {
         <Button onClick={handleClose} color="primary">
           Отменить
         </Button>
-        <Button onClick={ev => handleCreate(ev, name, note)} color="primary">
+        <Button
+          onClick={ev => handleCreate(ev, name, secondName, fatherName, note)}
+          color="primary"
+        >
           Создать
         </Button>
       </DialogActions>

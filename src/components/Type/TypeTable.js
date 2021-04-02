@@ -79,15 +79,15 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
   };
 
   const handleCreate = (event, number, name, note, id) => {
-    if (!number || !name) {
-      enqueueSnackbar("Нобходимо заполнить поля Номер и Название", {
+    if (!name) {
+      enqueueSnackbar("Нобходимо заполнить поле Название", {
         variant: "warning",
         anchorOrigin: {
           vertical: "top",
           horizontal: "center"
         }
       });
-    } else if (isNaN(Number(number))) {
+    } else if (number && isNaN(Number(number))) {
       enqueueSnackbar('В поле "номер" необходимо ввести число!', {
         variant: "warning",
         anchorOrigin: {
@@ -140,7 +140,6 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         color="primary"
         className={classes.iconButton}
         onClick={() => {
-          console.log({ params });
           handleUpdateDialogOpen(params);
         }}
       >
@@ -223,7 +222,7 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         localeText={russian}
         rowHeight={50}
         pageSize={20}
-        headerHeight={80}
+        headerHeight={60}
         columnBuffer={2}
         rowsPerPageOptions={[5, 10, 20, 50, 100]}
         pagination
@@ -237,6 +236,13 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         components={{
           Toolbar: CustomToolbar
         }}
+        sortModel={[
+          {
+            field: "number",
+            sort: "asc"
+          }
+        ]}
+        checkboxSelection
       />
     </div>
   );

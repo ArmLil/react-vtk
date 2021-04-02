@@ -47,6 +47,11 @@ const Naming = () => {
           obj.field = item;
           obj.flex = 0.4;
           break;
+        case "decimalNumber":
+          obj.headerName = "Децимальный номер";
+          obj.field = item;
+          obj.flex = 0.4;
+          break;
         case "createdAt":
           obj.headerName = "Дата создания";
           obj.field = item;

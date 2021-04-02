@@ -35,7 +35,7 @@ const Product = () => {
         rowObj.typeNumber = "";
       }
       if (row.naming) rowObj.naming = row.naming.name;
-      if (row.decimalNumber) rowObj.decimalNumber = row.decimalNumber.name;
+      // if (row.decimalNumber) rowObj.decimalNumber = row.decimalNumber.name;
       if (row.location) {
         rowObj.location = row.location.name;
         rowObj.locationNumber = row.location.number;
@@ -67,7 +67,7 @@ const Product = () => {
           obj.flex = 0.6;
           break;
         case "number":
-          obj.headerName = "Номер";
+          obj.headerName = "№п.п.";
           obj.field = item;
           obj.flex = 0.3;
           break;
@@ -117,11 +117,6 @@ const Product = () => {
           break;
         case "employee":
           obj.headerName = "Сотрудник";
-          obj.field = item;
-          obj.flex = 0.4;
-          break;
-        case "description":
-          obj.headerName = "Описание";
           obj.field = item;
           obj.flex = 0.4;
           break;
@@ -175,7 +170,6 @@ const Product = () => {
       if (col.field === "serialNumber") _columns[8] = col;
       if (col.field === "note") _columns[9] = col;
       if (col.field === "employee") _columns[10] = col;
-      if (col.field === "description") _columns[11] = col;
       if (col.field === "createdAt") _columns[12] = col;
       if (col.field === "updatedAt") _columns[13] = col;
     });
@@ -214,7 +208,7 @@ const Product = () => {
         setProducts(newProducts);
       } else {
         const productsFromServer = await fetchProducts();
-        setProducts(productsFromServer);
+        setProducts(Object.assign({}, productsFromServer));
       }
     } catch (err) {
       console.log(err);

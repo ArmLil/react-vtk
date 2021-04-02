@@ -91,7 +91,7 @@ export default function NamingTable({
     setOpenUpdateDialog(true);
   };
 
-  const handleCreate = (event, name, note, type) => {
+  const handleCreate = (event, name, note, type, decimalNumber) => {
     if (!name) {
       enqueueSnackbar("Необходимо заполнить поле Название", {
         variant: "warning",
@@ -237,7 +237,7 @@ export default function NamingTable({
         localeText={russian}
         rowHeight={50}
         pageSize={20}
-        headerHeight={80}
+        headerHeight={60}
         columnBuffer={2}
         rowsPerPageOptions={[5, 10, 20, 50, 100]}
         pagination
@@ -251,6 +251,13 @@ export default function NamingTable({
         components={{
           Toolbar: CustomToolbar
         }}
+        sortModel={[
+          {
+            field: "name",
+            sort: "asc"
+          }
+        ]}
+        checkboxSelection
       />
     </div>
   );

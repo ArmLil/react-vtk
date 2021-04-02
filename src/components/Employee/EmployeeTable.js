@@ -83,9 +83,9 @@ export default function EmployeeTable({
     setOpenUpdateDialog(true);
   };
 
-  const handleCreate = (event, name, note, id) => {
-    if (!name) {
-      enqueueSnackbar("Нобходимо заполнить поле Название", {
+  const handleCreate = (event, name, secondName, fatherName, note, id) => {
+    if (!name || !secondName) {
+      enqueueSnackbar("Нобходимо заполнить поля Имя, Фамилия", {
         variant: "warning",
         anchorOrigin: {
           vertical: "top",
@@ -95,6 +95,8 @@ export default function EmployeeTable({
     } else {
       let employee = {};
       employee.name = name;
+      employee.secondName = secondName;
+      if (!!fatherName) employee.fatherName = fatherName;
       if (!!note) employee.note = note;
       try {
         addEmployee(employee);
@@ -104,10 +106,12 @@ export default function EmployeeTable({
       }
     }
   };
-  const handleUpdate = (event, name, note, id) => {
+  const handleUpdate = (event, name, secondName, fatherName, note, id) => {
     let employee = {};
     employee.id = id;
     if (!!name) employee.name = name;
+    if (!!secondName) employee.secondName = secondName;
+    if (!!fatherName) employee.fatherName = fatherName;
     if (!!note) employee.note = note;
     updateEmployee(employee);
     setOpenUpdateDialog(false);
@@ -127,7 +131,7 @@ export default function EmployeeTable({
     field: "edit",
     headerName: "Редактировать",
     sortable: false,
-
+    flex: 0.2,
     width: 135,
     renderCell: (params: CellParams) => (
       <IconButton
@@ -147,6 +151,7 @@ export default function EmployeeTable({
     field: "delete",
     headerName: "Удалить",
     sortable: false,
+    flex: 0.2,
     renderCell: (params: CellParams) => (
       <IconButton
         aria-label="delete"
@@ -217,7 +222,7 @@ export default function EmployeeTable({
         localeText={russian}
         rowHeight={50}
         pageSize={20}
-        headerHeight={80}
+        headerHeight={60}
         columnBuffer={2}
         rowsPerPageOptions={[5, 10, 20, 50, 100]}
         pagination
@@ -231,6 +236,13 @@ export default function EmployeeTable({
         components={{
           Toolbar: CustomToolbar
         }}
+        sortModel={[
+          {
+            field: "name",
+            sort: "asc"
+          }
+        ]}
+        checkboxSelection
       />
     </div>
   );

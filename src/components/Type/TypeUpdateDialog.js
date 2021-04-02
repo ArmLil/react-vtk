@@ -26,9 +26,10 @@ export default function TypeUpdateDialog({
   params
 }) {
   const classes = useStyles();
-  const [name, setName] = React.useState(params.name);
-  const [note, setNote] = React.useState(params.note);
-  const [number, setNumber] = React.useState(params.number);
+  const [name, setName] = React.useState(params.name || "");
+  const [note, setNote] = React.useState(params.note || "");
+  const [number, setNumber] = React.useState(params.number || "");
+
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };

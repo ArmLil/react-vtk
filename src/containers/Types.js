@@ -33,7 +33,7 @@ const Type = () => {
           obj.field = item;
           break;
         case "number":
-          obj.headerName = "Номер";
+          obj.headerName = "№п.п.";
           obj.field = item;
           obj.flex = 0.15;
           obj.headerClassName = "super-app-theme--header";
@@ -123,7 +123,6 @@ const Type = () => {
   // Add Type
   const updateType = async type => {
     try {
-      console.log(JSON.stringify(type));
       const res = await fetch(`http://localhost:3001/api/v1/types/${type.id}`, {
         method: "PUT",
         headers: {

@@ -64,9 +64,7 @@ export default function ProductTable({
   const [openUpdateDialog, setOpenUpdateDialog] = React.useState(false);
   const [parameters, setParameters] = React.useState({});
   const [namings, setNamings] = React.useState([]);
-  const [decimalNumbers, setDecimalNumbers] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
-  const [notes, setNotes] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
   const [openWorning, setOpenWorning] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -79,21 +77,11 @@ export default function ProductTable({
       const dataNamings = await resNamings.json();
       setNamings(dataNamings.namings.rows);
 
-      const resDecimalNumbers = await fetch(
-        "http://localhost:3001/api/v1/decimalNumbers"
-      );
-      const dataDecimalNumbers = await resDecimalNumbers.json();
-      setDecimalNumbers(dataDecimalNumbers.decimalNumbers.rows);
-
       const resLocations = await fetch(
         "http://localhost:3001/api/v1/locations"
       );
       const dataLocations = await resLocations.json();
       setLocations(dataLocations.locations.rows);
-
-      const resNotes = await fetch("http://localhost:3001/api/v1/notes");
-      const dataNotes = await resNotes.json();
-      setNotes(dataNotes.notes.rows);
 
       const resEmployees = await fetch(
         "http://localhost:3001/api/v1/employees"
@@ -227,8 +215,6 @@ export default function ProductTable({
           open={openAddDialog}
           namings={namings}
           locations={locations}
-          decimalNumbers={decimalNumbers}
-          notes={notes}
           employees={employees}
         />
         <ProductUpdateDialog
@@ -238,8 +224,6 @@ export default function ProductTable({
           params={parameters}
           namings={namings}
           locations={locations}
-          decimalNumbers={decimalNumbers}
-          notes={notes}
           employees={employees}
         />
         <WorningDialog
@@ -257,7 +241,7 @@ export default function ProductTable({
         localeText={russian}
         rowHeight={50}
         pageSize={20}
-        headerHeight={80}
+        headerHeight={60}
         columnBuffer={2}
         rowsPerPageOptions={[5, 10, 20, 50, 100]}
         pagination
@@ -271,6 +255,13 @@ export default function ProductTable({
         components={{
           Toolbar: CustomToolbar
         }}
+        checkboxSelection
+        sortModel={[
+          {
+            field: "number",
+            sort: "asc"
+          }
+        ]}
       />
     </div>
   );

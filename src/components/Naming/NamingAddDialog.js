@@ -29,11 +29,17 @@ export default function NamingAddDialog({
 }) {
   const classes = useStyles();
   const [name, setName] = React.useState("");
+  const [decimalNumber, setDecimalNumber] = React.useState("");
   const [note, setNote] = React.useState("");
   const [type, setType] = React.useState("");
 
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+  };
+  const handleChangeDecimalNumber = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDecimalNumber(event.target.value);
   };
   const handleChangeNote = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNote(event.target.value);
@@ -96,6 +102,14 @@ export default function NamingAddDialog({
               );
             })}
           </TextField>
+          <TextField
+            id="standard-multiline-decNumber"
+            label="Децимальный номер"
+            multiline
+            rowsMax={4}
+            value={decimalNumber}
+            onChange={handleChangeDecimalNumber}
+          />
           <TextField
             id="standard-multiline-note"
             label="Описание"

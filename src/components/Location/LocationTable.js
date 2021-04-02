@@ -49,6 +49,10 @@ const useStyles = makeStyles({
     },
     "& .MuiDataGrid-colCellTitle": {
       fontWeight: "bold"
+    },
+    "&.MuiDataGrid-row": {
+      height: "auto",
+      wrapText: true
     }
   }
 });
@@ -228,7 +232,7 @@ export default function LocationTable({
         localeText={russian}
         rowHeight={50}
         pageSize={20}
-        headerHeight={80}
+        headerHeight={60}
         columnBuffer={2}
         rowsPerPageOptions={[5, 10, 20, 50, 100]}
         pagination
@@ -242,6 +246,13 @@ export default function LocationTable({
         components={{
           Toolbar: CustomToolbar
         }}
+        sortModel={[
+          {
+            field: "number",
+            sort: "asc"
+          }
+        ]}
+        checkboxSelection
       />
     </div>
   );

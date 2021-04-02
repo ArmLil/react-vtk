@@ -46,8 +46,7 @@ export default function TypeAddDialog({ handleCreate, handleClose, open }) {
         <form className={classes.root} noValidate autoComplete="off">
           <TextField
             id="standard-multiline-number"
-            required
-            label="Номер"
+            label="№п.п."
             multiline
             value={number}
             onChange={handleChangeNumber}

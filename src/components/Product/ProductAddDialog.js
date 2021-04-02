@@ -25,26 +25,22 @@ export default function NamingAddDialog({
   handleClose,
   open,
   namings,
-  decimalNumbers,
   locations,
-  notes,
   employees
 }) {
   const classes = useStyles();
   const [product, setProduct] = React.useState({});
   const [number, setNumber] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [note, setNote] = React.useState("");
 
   const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(Object.assign(event.target.value));
     setProduct(Object.assign(product, { number: event.target.value }));
   };
 
-  const handleChangeDescription = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setDescription(event.target.value);
-    setProduct(Object.assign(product, { description: event.target.value }));
+  const handleChangeNote = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNote(event.target.value);
+    setProduct(Object.assign(product, { note: event.target.value }));
   };
 
   return (
@@ -59,7 +55,7 @@ export default function NamingAddDialog({
         <form className={classes.root} noValidate autoComplete="off">
           <TextField
             id="standard-multiline-number"
-            label="Номер"
+            label="№п.п."
             value={number}
             onChange={handleChangeNumber}
           />
@@ -74,30 +70,12 @@ export default function NamingAddDialog({
             }}
           />
           <SelectTextField
-            items={decimalNumbers}
-            needId={true}
-            title="Децимальный номер"
-            value={""}
-            getItem={item => {
-              setProduct(Object.assign(product, { decimalNumberId: item }));
-            }}
-          />
-          <SelectTextField
             items={locations}
             needId={true}
             title="Место производства"
             value={""}
             getItem={item => {
               setProduct(Object.assign(product, { locationId: item }));
-            }}
-          />
-          <SelectTextField
-            items={notes}
-            needId={true}
-            title="Примечание"
-            value={""}
-            getItem={item => {
-              setProduct(Object.assign(product, { noteId: item }));
             }}
           />
           <SelectTextField
@@ -111,9 +89,9 @@ export default function NamingAddDialog({
           />
           <TextField
             id="standard-multiline-description"
-            label="Описание"
-            value={description}
-            onChange={handleChangeDescription}
+            label="Примечание"
+            value={note}
+            onChange={handleChangeNote}
           />
         </form>
       </DialogContent>

@@ -31,11 +31,22 @@ const Employee = () => {
         case "id":
           obj.headerName = "ID";
           obj.field = item;
+          obj.hide = true;
           break;
         case "name":
-          obj.headerName = "Название";
+          obj.headerName = "Имя";
           obj.field = item;
-          obj.flex = 0.4;
+          obj.flex = 0.35;
+          break;
+        case "secondName":
+          obj.headerName = "Фамилия";
+          obj.field = item;
+          obj.flex = 0.35;
+          break;
+        case "fatherName":
+          obj.headerName = "Отчество";
+          obj.field = item;
+          obj.flex = 0.35;
           break;
         case "createdAt":
           obj.headerName = "Дата создания";
@@ -45,7 +56,7 @@ const Employee = () => {
         case "updatedAt":
           obj.headerName = "Дата редактирования";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.2;
           break;
         case "note":
           obj.headerName = "Примечание";

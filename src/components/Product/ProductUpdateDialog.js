@@ -62,7 +62,7 @@ export default function ProductUpdateDialog({
         <form className={classes.root} noValidate autoComplete="off">
           <TextField
             id="standard-number"
-            label="Номер"
+            label="№п.п."
             value={number}
             onChange={handleChangeNumber}
           />
@@ -74,15 +74,6 @@ export default function ProductUpdateDialog({
             title="Наименование"
             getItem={item => {
               setProduct(Object.assign(product, { namingId: item }));
-            }}
-          />
-          <SelectTextField
-            items={decimalNumbers}
-            needId={true}
-            title="Децимальный номер"
-            value={params.decimalNumberId}
-            getItem={item => {
-              setProduct(Object.assign(product, { decimalNumberId: item }));
             }}
           />
           <SelectTextField
