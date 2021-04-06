@@ -70,24 +70,34 @@ export default function ProductTable({
   const { enqueueSnackbar } = useSnackbar();
 
   const classes = useStyles();
-
+  console.log("productTable.js");
   React.useEffect(() => {
+    console.log("USE EFFECT TABLE");
     const setItemsStates = async () => {
       const resNamings = await fetch("http://localhost:3001/api/v1/namings");
       const dataNamings = await resNamings.json();
-      setNamings(dataNamings.namings.rows);
+      let namings_ = dataNamings.namings.rows.map(naming => {
+        return Object.assign({}, naming, {
+          name: `${naming.name} ${naming.decimalNumber}`
+        });
+      });
+      setNamings(namings_);
 
       const resLocations = await fetch(
         "http://localhost:3001/api/v1/locations"
       );
       const dataLocations = await resLocations.json();
       setLocations(dataLocations.locations.rows);
-
       const resEmployees = await fetch(
         "http://localhost:3001/api/v1/employees"
       );
       const dataEmployees = await resEmployees.json();
-      setEmployees(dataEmployees.employees.rows);
+      let employees_ = dataEmployees.employees.rows.map(loc => {
+        return Object.assign({}, loc, {
+          name: `${loc.secondName} ${loc.name[0]}.${loc.fatherName[0]}.`
+        });
+      });
+      setEmployees(employees_);
     };
     setItemsStates();
   }, []);
@@ -145,7 +155,7 @@ export default function ProductTable({
     field: "edit",
     headerName: "Редактировать",
     sortable: false,
-    flex: 0.15,
+    flex: 0.2,
     width: 135,
     renderCell: (params: CellParams) => (
       <IconButton
@@ -165,7 +175,7 @@ export default function ProductTable({
     field: "delete",
     headerName: "Удалить",
     sortable: false,
-    flex: 0.15,
+    flex: 0.2,
     renderCell: (params: CellParams) => (
       <IconButton
         aria-label="delete"

@@ -8,14 +8,15 @@ var moment = require("moment");
 const Product = () => {
   const [products, setProducts] = useState({});
   const { enqueueSnackbar } = useSnackbar();
-
+  console.log("produc.js");
   useEffect(() => {
+    console.log("use effect");
     const getProducts = async () => {
       const productsFromServer = await fetchProducts();
-      setProducts(productsFromServer);
+      setProducts(Object.assign({}, productsFromServer));
     };
     getProducts();
-  });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch Products
   const fetchProducts = async () => {
@@ -23,7 +24,6 @@ const Product = () => {
     const data = await res.json();
     let columns = [];
     let rows = [];
-
     data.products.rows.forEach(row => {
       let rowObj = {};
       rowObj.createdAt = moment(row.createdAt).format("YYYY.MM.DD HH:mm");
@@ -35,15 +35,18 @@ const Product = () => {
         rowObj.typeNumber = "";
       }
       if (row.naming) rowObj.naming = row.naming.name;
-      // if (row.decimalNumber) rowObj.decimalNumber = row.decimalNumber.name;
+      if (row.decimalNumber) rowObj.decimalNumber = row.decimalNumber;
       if (row.location) {
         rowObj.location = row.location.name;
         rowObj.locationNumber = row.location.number;
       } else {
         rowObj.locationNumber = "";
       }
-      if (row.note) rowObj.note = row.note.name;
-      if (row.employee) rowObj.employee = row.employee.name;
+      if (row.note) rowObj.note = row.note;
+      if (row.employee)
+        rowObj.employee = `${row.employee.name} ${row.employee.secondName[0]}.${
+          row.employee.fatherName[0]
+        }.`;
       rowObj = Object.assign({}, row, rowObj);
       rows.push(rowObj);
     });
@@ -51,7 +54,6 @@ const Product = () => {
     let locColumns = [];
     if (data.products.count > 0)
       locColumns = Object.keys(data.products.rows[0]);
-
     locColumns.forEach(item => {
       let obj = {};
       switch (item) {
@@ -69,7 +71,7 @@ const Product = () => {
         case "number":
           obj.headerName = "№п.п.";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.2;
           break;
         case "decimalNumber":
           obj.headerName = "Децимальный номер";
@@ -84,15 +86,21 @@ const Product = () => {
         case "year":
           obj.headerName = "Год";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.2;
           break;
         case "location":
           obj.headerName = "Место производства";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.2;
           obj.renderCell = (params: CellParams) => (
             <Tooltip title={params.row.location || ""} placement="bottom">
-              <Button style={{ textTransform: "lowercase" }}>
+              <Button
+                style={{
+                  textTransform: "lowercase",
+                  fontSize: 14,
+                  justifyContent: "flex-start"
+                }}
+              >
                 {params.row.locationNumber}
               </Button>
             </Tooltip>
@@ -101,10 +109,16 @@ const Product = () => {
         case "type":
           obj.headerName = "Тип изделия ";
           obj.field = item;
-          obj.flex = 0.3;
+          obj.flex = 0.2;
           obj.renderCell = (params: CellParams) => (
             <Tooltip title={params.row.type || ""} placement="bottom">
-              <Button style={{ textTransform: "lowercase" }}>
+              <Button
+                style={{
+                  textTransform: "lowercase",
+                  fontSize: 14,
+                  justifyContent: "flex-start"
+                }}
+              >
                 {params.row.typeNumber}
               </Button>
             </Tooltip>
@@ -146,10 +160,6 @@ const Product = () => {
         item !== "typeId" &&
         item !== "namingId" &&
         item !== "locationId" &&
-        item !== "noteId" &&
-        item !== "typeNumber" &&
-        item !== "locationNumber" &&
-        item !== "decimalNumberId" &&
         item !== "employeeId"
       ) {
         columns.push(obj);
@@ -170,10 +180,9 @@ const Product = () => {
       if (col.field === "serialNumber") _columns[8] = col;
       if (col.field === "note") _columns[9] = col;
       if (col.field === "employee") _columns[10] = col;
-      if (col.field === "createdAt") _columns[12] = col;
-      if (col.field === "updatedAt") _columns[13] = col;
+      if (col.field === "createdAt") _columns[11] = col;
+      if (col.field === "updatedAt") _columns[12] = col;
     });
-
     products.columns = _columns;
     return products;
   };

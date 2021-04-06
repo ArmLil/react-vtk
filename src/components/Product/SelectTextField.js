@@ -14,6 +14,7 @@ export default function SelectTextField({
   const [item, setItem] = React.useState(value);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target);
     getItem(event.target.value);
     setItem(event.target.value);
   };
