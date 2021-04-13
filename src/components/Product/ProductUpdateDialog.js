@@ -26,26 +26,31 @@ export default function ProductUpdateDialog({
   handleClose,
   open,
   namings,
-  decimalNumbers,
   locations,
-  notes,
   employees
 }) {
   const classes = useStyles();
-  const [product, setProduct] = React.useState(params);
-  const [number, setNumber] = React.useState(params.number);
-  const [description, setDescription] = React.useState(params.description);
+  const [product, setProduct] = React.useState(params || []);
+  const [number, setNumber] = React.useState(params.number || "");
+  const [bookingDate, setBookingDate] = React.useState(
+    params.bookingDate || ""
+  );
+  const [note, setNote] = React.useState(params.note || "");
 
   const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(event.target.value);
     setProduct(Object.assign(product, { number: event.target.value }));
   };
 
-  const handleChangeDescription = (
+  const handleChangeBookingDate = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setDescription(event.target.value);
-    setProduct(Object.assign(product, { description: event.target.value }));
+    setBookingDate(event.target.value);
+    setProduct(Object.assign(product, { bookingDate: event.target.value }));
+  };
+  const handleChangeNote = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNote(event.target.value);
+    setProduct(Object.assign(product, { note: event.target.value }));
   };
 
   return (
@@ -54,7 +59,7 @@ export default function ProductUpdateDialog({
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Изделия</DialogTitle>
+      <DialogTitle id="form-dialog-title">Изделие</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Пожалуйста, отредактируйте нужные поля!
@@ -68,13 +73,17 @@ export default function ProductUpdateDialog({
           />
           <SelectTextField
             items={namings}
-            required={true}
             needId={true}
             value={params.namingId}
             title="Наименование"
             getItem={item => {
               setProduct(Object.assign(product, { namingId: item }));
             }}
+          />
+          <TextField
+            value={bookingDate}
+            label="Дата бронирования"
+            onChange={handleChangeBookingDate}
           />
           <SelectTextField
             items={locations}
@@ -85,15 +94,7 @@ export default function ProductUpdateDialog({
               setProduct(Object.assign(product, { locationId: item }));
             }}
           />
-          <SelectTextField
-            items={notes}
-            needId={true}
-            title="Примечание"
-            value={params.noteId}
-            getItem={item => {
-              setProduct(Object.assign(product, { noteId: item }));
-            }}
-          />
+
           <SelectTextField
             items={employees}
             needId={true}
@@ -105,9 +106,9 @@ export default function ProductUpdateDialog({
           />
           <TextField
             id="standard-multiline-description"
-            label="Описание"
-            value={description}
-            onChange={handleChangeDescription}
+            label="Примечание"
+            value={note}
+            onChange={handleChangeNote}
           />
         </form>
       </DialogContent>

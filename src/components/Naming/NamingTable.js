@@ -236,7 +236,7 @@ export default function NamingTable({
       <XGrid
         className={classes.root}
         localeText={russian}
-        rowHeight={50}
+        rowHeight={40}
         pageSize={20}
         headerHeight={60}
         columnBuffer={2}

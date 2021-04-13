@@ -16,6 +16,11 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(1),
         width: "55ch"
       }
+    },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginRight: 35
     }
   })
 );
@@ -31,6 +36,8 @@ export default function NamingAddDialog({
   const classes = useStyles();
   const [product, setProduct] = React.useState({});
   const [number, setNumber] = React.useState("");
+  const [count, setCount] = React.useState("1");
+  const [bookingDate, setBookingDate] = React.useState("");
   const [note, setNote] = React.useState("");
 
   const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,13 +50,37 @@ export default function NamingAddDialog({
     setProduct(Object.assign(product, { note: event.target.value }));
   };
 
+  const handleChangeCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCount(event.target.value);
+    setProduct(Object.assign(product, { count: event.target.value }));
+  };
+
+  const handleChangeBookingDate = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setBookingDate(event.target.value);
+    setProduct(Object.assign(product, { bookingDate: event.target.value }));
+  };
+
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Изделия</DialogTitle>
+      <div className={classes.header}>
+        <DialogTitle id="form-dialog-title">Изделие</DialogTitle>
+        <TextField
+          style={{ width: 150, marginTop: 20 }}
+          InputProps={{ inputProps: { min: 1, max: 50 } }}
+          id="standard-count"
+          type="number"
+          helperText="Количество создаваемых элементов"
+          value={count}
+          onChange={handleChangeCount}
+        />
+      </div>
+
       <DialogContent>
         <DialogContentText>Пожалуйста, заполните поля!</DialogContentText>
         <form className={classes.root} noValidate autoComplete="off">
@@ -69,10 +100,18 @@ export default function NamingAddDialog({
               setProduct(Object.assign(product, { namingId: item }));
             }}
           />
+          <TextField
+            id="standard-multiline-booking"
+            label="Дата бронирования"
+            value={bookingDate}
+            onChange={handleChangeBookingDate}
+            placeholder="ДД.ММ.ГГ"
+          />
           <SelectTextField
             items={locations}
             needId={true}
             title="Место производства"
+            required={true}
             value={""}
             getItem={item => {
               setProduct(Object.assign(product, { locationId: item }));

@@ -21,6 +21,21 @@ const useStyles = makeStyles({
     flexDirection: "column",
     flexGrow: 0.5
   },
+  titleLevel: {
+    width: "100%",
+    paddingLeft: 20,
+    paddingRight: 20,
+    display: "flex",
+    justifyContent: "center"
+  },
+  buttonDownload: {
+    marginTop: 20
+  },
+  title: {
+    display: "flex",
+    flex: 1,
+    justifyContent: "center"
+  },
   tableContainer: {
     display: "flex",
     height: "85vh",
@@ -64,15 +79,17 @@ export default function ProductTable({
   const [openUpdateDialog, setOpenUpdateDialog] = React.useState(false);
   const [parameters, setParameters] = React.useState({});
   const [namings, setNamings] = React.useState([]);
+  const [model, setModel] = React.useState({});
+  const [selection, setSelection] = React.useState([]);
+  const [exportRows, setExportRows] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
   const [openWorning, setOpenWorning] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const classes = useStyles();
-  console.log("productTable.js");
+
   React.useEffect(() => {
-    console.log("USE EFFECT TABLE");
     const setItemsStates = async () => {
       const resNamings = await fetch("http://localhost:3001/api/v1/namings");
       const dataNamings = await resNamings.json();
@@ -129,16 +146,31 @@ export default function ProductTable({
     if (!product.namingId) showNotification("Необходимо выбрать Наименование.");
     else if (!product.locationId)
       showNotification("Необходимо выбрать Место производства.");
-    else {
+    else if (
+      product.bookingDate &&
+      !product.bookingDate.match(
+        /^(0?[1-9]|[12][0-9]|3[0-1])[/., -](0?[1-9]|1[0-2])[/., -](19|20)?\d{2}$/
+      )
+    ) {
+      showNotification("Неправильный фомат даты бронирования.");
+    } else {
       addProduct(product);
       setOpenAddDialog(false);
     }
   };
 
   const handleUpdate = (event, product) => {
-    console.log({ product });
-    updateProduct(product);
-    setOpenUpdateDialog(false);
+    if (
+      product.bookingDate &&
+      !product.bookingDate.match(
+        /^(0?[1-9]|[12][0-9]|3[0-1])[/., -](0?[1-9]|1[0-2])[/., -](19|20)?\d{2}$/
+      )
+    ) {
+      showNotification("Неправильный фомат даты бронирования.");
+    } else {
+      updateProduct(product);
+      setOpenUpdateDialog(false);
+    }
   };
 
   const handleDeleteWorningClose = action => {
@@ -149,6 +181,25 @@ export default function ProductTable({
   const handleDeleteWorningOpen = params => {
     setOpenWorning(true);
     setParameters(Object.assign({}, params.row));
+  };
+
+  const handleDownloadClick = () => {
+    console.log({ selection, model });
+    let _columns = Object.entries(model.columns.lookup);
+    let expRows = [];
+    if (model.rows && Object.keys(model.rows.idRowsLookup).length > 0) {
+      selection.forEach((select, i) => {
+        let _row = model.rows.idRowsLookup[select];
+        _columns.forEach((item, i) => {
+          if (item[0] !== "__check__" && item[1].hide === true) {
+            console.log("item[1] ", item[0], item[1]);
+            delete _row[item[0]];
+          }
+        });
+        expRows.push(model.rows.idRowsLookup[select]);
+      });
+    }
+    console.log({ expRows });
   };
 
   const editColumn = {
@@ -199,11 +250,24 @@ export default function ProductTable({
   function CustomToolbar() {
     return (
       <GridToolbarContainer className={classes.toolbarContainer}>
-        <div>
-          <Typography variant="h5" gutterBottom>
+        <div className={classes.titleLevel}>
+          <Typography variant="h5" gutterBottom className={classes.title}>
             Изделия
           </Typography>
+          <div className={classes.buttonDownload}>
+            <Button
+              color="secondary"
+              variant="outlined"
+              onClick={params => {
+                handleDownloadClick();
+              }}
+            >
+              {" "}
+              скачать
+            </Button>
+          </div>
         </div>
+
         <div className={classes.tools}>
           <Tooltip title="Создать новый элемент">
             <Button
@@ -243,29 +307,51 @@ export default function ProductTable({
         />
       </GridToolbarContainer>
     );
+    // onStateChange={params => {
+    //   handleState(params);
+    // }}
+    // onFilterModelChange={onFilter => {
+    //   handleFilter(onFilter);
+    // }}
   }
   return (
     <div className={classes.tableContainer}>
       <XGrid
+        checkboxSelection={true}
         className={classes.root}
         localeText={russian}
-        rowHeight={50}
+        rowHeight={40}
         pageSize={20}
         headerHeight={60}
         columnBuffer={2}
-        rowsPerPageOptions={[5, 10, 20, 50, 100]}
+        rowsPerPageOptions={[5, 10, 15, 20, 50, 100]}
         pagination
         density="standard"
         rows={rows}
         columns={columns}
         disableColumnMenu={true}
+        disableSelectionOnClick={true}
         showColumnRightBorder={true}
         showCellRightBorder={true}
         disableExtendRowFullWidth={true}
+        onStateChange={params => {
+          // console.log(params);
+        }}
+        onSelectionModelChange={params => {
+          setSelection(params.selectionModel);
+        }}
+        onSortModelChange={params => {
+          // console.log(params);
+        }}
+        onColumnHeaderClick={params => {
+          setModel(params.api.state);
+        }}
+        onRowSelected={params => {
+          setModel(params.api.current.state);
+        }}
         components={{
           Toolbar: CustomToolbar
         }}
-        checkboxSelection
         sortModel={[
           {
             field: "number",
