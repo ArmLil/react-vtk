@@ -1,4 +1,9 @@
 import * as React from "react";
+// import ReactPDF from "@react-pdf/renderer";
+// import { PDFViewer } from "@react-pdf/renderer";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+// import Pdf from "react-to-pdf";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,6 +15,8 @@ import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
 import ProductAddDialog from "./ProductAddDialog";
 import ProductUpdateDialog from "./ProductUpdateDialog";
+// import { Link } from "react-router-dom";
+// import DownloadDialog from "./Download";
 import WorningDialog from "../WorningDialog";
 import Button from "@material-ui/core/Button";
 
@@ -81,7 +88,6 @@ export default function ProductTable({
   const [namings, setNamings] = React.useState([]);
   const [model, setModel] = React.useState({});
   const [selection, setSelection] = React.useState([]);
-  const [exportRows, setExportRows] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
   const [openWorning, setOpenWorning] = React.useState(false);
@@ -183,23 +189,78 @@ export default function ProductTable({
     setParameters(Object.assign({}, params.row));
   };
 
-  const handleDownloadClick = () => {
+  const exportPDF = () => {
     console.log({ selection, model });
+    if (selection.length === 0) {
+      showNotification("Необходимо выбрать строки.");
+      return;
+    }
     let _columns = Object.entries(model.columns.lookup);
+    console.log({ _columns });
+    let _headers = [];
+    _columns.forEach((col, i) => {
+      if (
+        col[1].hide === false &&
+        col[0] !== "edit" &&
+        col[0] !== "delete" &&
+        col[0] !== "__check__"
+      ) {
+        _headers.push({
+          header: col[1].headerName,
+          dataKey: col[1].field
+        });
+      }
+    });
+    console.log({ _headers });
     let expRows = [];
     if (model.rows && Object.keys(model.rows.idRowsLookup).length > 0) {
       selection.forEach((select, i) => {
-        let _row = model.rows.idRowsLookup[select];
-        _columns.forEach((item, i) => {
-          if (item[0] !== "__check__" && item[1].hide === true) {
-            console.log("item[1] ", item[0], item[1]);
-            delete _row[item[0]];
+        let _row = Object.assign({}, model.rows.idRowsLookup[select]);
+        _columns.forEach((col, i) => {
+          if (
+            col[1].hide === false &&
+            col[0] !== "edit" &&
+            col[0] !== "delete" &&
+            col[0] !== "__check__"
+          ) {
+            delete _row[col[0]];
           }
         });
         expRows.push(model.rows.idRowsLookup[select]);
       });
     }
     console.log({ expRows });
+
+    // var font = "undefined";
+    // var callAddFont = function() {
+    //   this.addFileToVFS("roboto-normal.ttf", font);
+    //   this.addFont("roboto-normal.ttf", "roboto", "normal");
+    // };
+    // jsPDF.API.events.push(["addFonts", callAddFont]);
+
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+    doc.setFont("UTF-8", "normal");
+    doc.setFontSize(15);
+    // console.log(doc.getFontList());
+    const title = "Изделия";
+
+    let content = {
+      startY: 50,
+      columns: _headers,
+      body: expRows,
+      styles: { halign: "center" },
+      theme: "grid",
+      headStyles: { halign: "center" }
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("report.pdf");
   };
 
   const editColumn = {
@@ -258,9 +319,7 @@ export default function ProductTable({
             <Button
               color="secondary"
               variant="outlined"
-              onClick={params => {
-                handleDownloadClick();
-              }}
+              onClick={() => exportPDF()}
             >
               {" "}
               скачать
@@ -314,9 +373,13 @@ export default function ProductTable({
     //   handleFilter(onFilter);
     // }}
   }
+
+  const ref = React.createRef();
+
   return (
     <div className={classes.tableContainer}>
       <XGrid
+        ref={ref}
         checkboxSelection={true}
         className={classes.root}
         localeText={russian}

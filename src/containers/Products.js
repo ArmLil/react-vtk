@@ -20,9 +20,11 @@ const Product = () => {
 
   // Fetch Products
   const fetchProducts = async () => {
+    let _product = {};
     console.log("fetchProducts...");
     const res = await fetch("http://localhost:3001/api/v1/products");
     const data = await res.json();
+    console.log({ data });
     let columns = [];
     let rows = [];
     data.products.rows.forEach(row => {
@@ -51,7 +53,7 @@ const Product = () => {
       rowObj = Object.assign({}, row, rowObj);
       rows.push(rowObj);
     });
-    products.rows = rows;
+    _product.rows = rows;
     let locColumns = [];
     if (!products.columns || products.columns.length === 0) {
       if (data.products.count > 0)
@@ -185,9 +187,9 @@ const Product = () => {
         if (col.field === "createdAt") _columns[11] = col;
         if (col.field === "updatedAt") _columns[12] = col;
       });
-      products.columns = _columns;
+      _product.columns = _columns;
     }
-    return products;
+    return _product;
   };
 
   const addProduct = async product => {
