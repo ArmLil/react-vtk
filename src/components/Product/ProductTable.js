@@ -1,13 +1,18 @@
 import * as React from "react";
-// import ReactPDF from "@react-pdf/renderer";
-// import { PDFViewer } from "@react-pdf/renderer";
+// import "./Roboto-Italic-italic.js";
+// import "./Roboto-Regular-italic.js";
+import "./FiraSans-Regular-normal.js";
 import "jspdf-autotable";
 import jsPDF from "jspdf";
-// import Pdf from "react-to-pdf";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { GridToolbarContainer, GridToolbar } from "@material-ui/x-grid";
+import {
+  GridToolbarContainer,
+  GridDensitySelector,
+  GridFilterToolbarButton,
+  GridColumnsToolbarButton
+} from "@material-ui/x-grid";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
@@ -15,8 +20,6 @@ import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
 import ProductAddDialog from "./ProductAddDialog";
 import ProductUpdateDialog from "./ProductUpdateDialog";
-// import { Link } from "react-router-dom";
-// import DownloadDialog from "./Download";
 import WorningDialog from "../WorningDialog";
 import Button from "@material-ui/core/Button";
 
@@ -205,61 +208,64 @@ export default function ProductTable({
         col[0] !== "delete" &&
         col[0] !== "__check__"
       ) {
-        _headers.push({
-          header: col[1].headerName,
-          dataKey: col[1].field
-        });
+        if (col[0] === "type") {
+          _headers.push({
+            header: col[1].headerName,
+            dataKey: "typeNumber"
+          });
+        } else if (col[0] === "location") {
+          _headers.push({
+            header: col[1].headerName,
+            dataKey: "locationNumber"
+          });
+        } else {
+          _headers.push({
+            header: col[1].headerName,
+            dataKey: col[0]
+          });
+        }
       }
     });
     console.log({ _headers });
     let expRows = [];
     if (model.rows && Object.keys(model.rows.idRowsLookup).length > 0) {
       selection.forEach((select, i) => {
-        let _row = Object.assign({}, model.rows.idRowsLookup[select]);
-        _columns.forEach((col, i) => {
-          if (
-            col[1].hide === false &&
-            col[0] !== "edit" &&
-            col[0] !== "delete" &&
-            col[0] !== "__check__"
-          ) {
-            delete _row[col[0]];
-          }
-        });
         expRows.push(model.rows.idRowsLookup[select]);
       });
     }
     console.log({ expRows });
 
-    // var font = "undefined";
-    // var callAddFont = function() {
-    //   this.addFileToVFS("roboto-normal.ttf", font);
-    //   this.addFont("roboto-normal.ttf", "roboto", "normal");
-    // };
-    // jsPDF.API.events.push(["addFonts", callAddFont]);
-
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
     const orientation = "portrait"; // portrait or landscape
 
-    const marginLeft = 40;
     const doc = new jsPDF(orientation, unit, size);
-    doc.setFont("UTF-8", "normal");
     doc.setFontSize(15);
-    // console.log(doc.getFontList());
+    console.log(doc.getFontList());
+    doc.setFont("FiraSans-Regular", "normal");
     const title = "Изделия";
-
+    doc.setFillColor(0);
     let content = {
-      startY: 50,
+      startY: 70,
       columns: _headers,
       body: expRows,
-      styles: { halign: "center" },
+      styles: {
+        halign: "center",
+        font: "FiraSans-Regular",
+        lineColor: "black"
+      },
       theme: "grid",
-      headStyles: { halign: "center" }
+      headStyles: {
+        halign: "center",
+        fillColor: "#e8eaf6",
+        textColor: "black",
+        lineWidth: 0.5
+      }
     };
 
-    doc.text(title, marginLeft, 40);
+    doc.text(title, 250, 40);
     doc.autoTable(content);
+    console.log(window.location.href);
     doc.save("report.pdf");
   };
 
@@ -339,7 +345,9 @@ export default function ProductTable({
             </Button>
           </Tooltip>
           <div>
-            <GridToolbar />
+            <GridFilterToolbarButton />
+            <GridColumnsToolbarButton />
+            <GridDensitySelector />
           </div>
         </div>
         <ProductAddDialog
