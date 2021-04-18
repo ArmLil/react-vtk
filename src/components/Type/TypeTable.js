@@ -2,7 +2,12 @@ import * as React from "react";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { GridToolbarContainer, GridToolbar } from "@material-ui/x-grid";
+import {
+  GridToolbarContainer,
+  GridDensitySelector,
+  GridFilterToolbarButton,
+  GridColumnsToolbarButton
+} from "@material-ui/x-grid";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
@@ -193,7 +198,9 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
             </Tooltip>
           </div>
           <div>
-            <GridToolbar />
+            <GridFilterToolbarButton />
+            <GridColumnsToolbarButton />
+            <GridDensitySelector />
           </div>
         </div>
         <TypeAddDialog

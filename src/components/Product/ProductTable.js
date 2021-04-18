@@ -18,6 +18,8 @@ import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined"
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import russian from "../../constants/localeTextConstants.js";
 import Tooltip from "@material-ui/core/Tooltip";
+import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
 import ProductAddDialog from "./ProductAddDialog";
 import ProductUpdateDialog from "./ProductUpdateDialog";
 import WorningDialog from "../WorningDialog";
@@ -90,6 +92,7 @@ export default function ProductTable({
   const [parameters, setParameters] = React.useState({});
   const [namings, setNamings] = React.useState([]);
   const [model, setModel] = React.useState({});
+  const [orientation, setOrientation] = React.useState("portrait");
   const [selection, setSelection] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
@@ -193,13 +196,12 @@ export default function ProductTable({
   };
 
   const exportPDF = () => {
-    console.log({ selection, model });
+    // console.log({ selection, model });
     if (selection.length === 0) {
       showNotification("Необходимо выбрать строки.");
       return;
     }
     let _columns = Object.entries(model.columns.lookup);
-    console.log({ _columns });
     let _headers = [];
     _columns.forEach((col, i) => {
       if (
@@ -237,13 +239,12 @@ export default function ProductTable({
 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
-    const orientation = "portrait"; // portrait or landscape
+    const _orientation = orientation; // portrait or landscape
 
-    const doc = new jsPDF(orientation, unit, size);
+    const doc = new jsPDF(_orientation, unit, size);
     doc.setFontSize(15);
-    console.log(doc.getFontList());
     doc.setFont("FiraSans-Regular", "normal");
-    const title = "Изделия";
+    const title = "ВТК - изделия";
     doc.setFillColor(0);
     let content = {
       startY: 70,
@@ -263,7 +264,7 @@ export default function ProductTable({
       }
     };
 
-    doc.text(title, 250, 40);
+    doc.text(title, 40, 40);
     doc.autoTable(content);
     console.log(window.location.href);
     doc.save("report.pdf");
@@ -322,6 +323,24 @@ export default function ProductTable({
             Изделия
           </Typography>
           <div className={classes.buttonDownload}>
+            <TextField
+              style={{ width: 110, marginRight: 5 }}
+              InputProps={{ style: { fontSize: 14 } }}
+              id="filled-select-currency"
+              select
+              value={orientation}
+              onChange={ev => {
+                setOrientation(ev.target.value);
+              }}
+              helperText="Ориентация"
+            >
+              <MenuItem key="0" value="landscape" style={{ fontSize: 14 }}>
+                Альбомная
+              </MenuItem>
+              <MenuItem key="1" value="portrait" style={{ fontSize: 14 }}>
+                Книжная
+              </MenuItem>
+            </TextField>
             <Button
               color="secondary"
               variant="outlined"
@@ -374,12 +393,6 @@ export default function ProductTable({
         />
       </GridToolbarContainer>
     );
-    // onStateChange={params => {
-    //   handleState(params);
-    // }}
-    // onFilterModelChange={onFilter => {
-    //   handleFilter(onFilter);
-    // }}
   }
 
   const ref = React.createRef();
