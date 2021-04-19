@@ -96,7 +96,6 @@ export default function ProductTable({
   const [namings, setNamings] = React.useState([]);
   const [model, setModel] = React.useState({});
   const [orientation, setOrientation] = React.useState("portrait");
-  const [deleteDisabled, setDeleteDisabled] = React.useState(true);
   const [selection, setSelection] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
@@ -197,7 +196,6 @@ export default function ProductTable({
 
   const handleDeleteRowsWorningClose = action => {
     if (action === "submit") {
-      let expRows = [];
       if (model.rows && Object.keys(model.rows.idRowsLookup).length > 0) {
         selection.forEach((select, i) => {
           deleteProduct(model.rows.idRowsLookup[select], "group");

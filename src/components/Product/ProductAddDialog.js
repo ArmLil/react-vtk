@@ -7,7 +7,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import SelectTextField from "./SelectTextField";
+import { useSnackbar } from "notistack";
+
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -38,11 +39,25 @@ export default function NamingAddDialog({
   const [product, setProduct] = React.useState({});
   const [number, setNumber] = React.useState("");
   const [naming, setNaming] = React.useState("");
+  const [location, setLocation] = React.useState("");
+  const [employee, setEmployee] = React.useState("");
   const [count, setCount] = React.useState(1);
   const [bookingDate, setBookingDate] = React.useState("");
   const [note, setNote] = React.useState("");
+  const [inputNaming, setInputNaming] = React.useState("");
+  const [inputLocation, setInputLocation] = React.useState("");
+  const [inputEmployee, setInputEmployee] = React.useState("");
 
-  const [inputValue, setInputValue] = React.useState("");
+  const { enqueueSnackbar } = useSnackbar();
+  const showNotification = text => {
+    enqueueSnackbar(text, {
+      variant: "warning",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center"
+      }
+    });
+  };
 
   const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(Object.assign(event.target.value));
@@ -96,7 +111,7 @@ export default function NamingAddDialog({
           />
           <Autocomplete
             options={[...namings, ""]}
-            inputValue={inputValue}
+            inputValue={inputNaming}
             value={naming}
             onChange={(event, newValue) => {
               if (newValue && newValue.id)
@@ -104,8 +119,15 @@ export default function NamingAddDialog({
               else setProduct(Object.assign(product, { namingId: null }));
               setNaming(newValue);
             }}
-            onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue);
+            onOpen={() => {
+              if (namings.length === 0) {
+                showNotification(
+                  `Чтобы выбрать Наименование, необходимо заранее создавать их в соответствующем списке.`
+                );
+              }
+            }}
+            onInputChange={(event, newInputNaming) => {
+              setInputNaming(newInputNaming);
             }}
             getOptionLabel={option => {
               let showValue = "";
@@ -126,24 +148,71 @@ export default function NamingAddDialog({
             onChange={handleChangeBookingDate}
             placeholder="ДД.ММ.ГГ"
           />
-          <SelectTextField
-            items={locations}
-            needId={true}
-            title="Место производства"
-            required={true}
-            value={""}
-            getItem={item => {
-              setProduct(Object.assign(product, { locationId: item }));
+          <Autocomplete
+            options={[...locations, ""]}
+            inputValue={inputLocation}
+            value={location}
+            onChange={(event, newValue) => {
+              if (newValue && newValue.id)
+                setProduct(Object.assign(product, { locationId: newValue.id }));
+              else setProduct(Object.assign(product, { locationId: null }));
+              setLocation(newValue);
             }}
+            onOpen={() => {
+              if (locations.length === 0) {
+                showNotification(
+                  `Чтобы выбрать Место, необходимо заранее создавать их в соответствующем списке.`
+                );
+              }
+            }}
+            onInputChange={(event, newInputLocation) => {
+              setInputLocation(newInputLocation);
+            }}
+            getOptionLabel={option => {
+              let showValue = "";
+              if (option.name) showValue = `${option.name}, ${option.number}`;
+              return showValue;
+            }}
+            id="controllable-states-loc"
+            style={{ width: 300 }}
+            renderInput={params => (
+              <TextField
+                {...params}
+                label="Место производства"
+                multiline
+              ></TextField>
+            )}
           />
-          <SelectTextField
-            items={employees}
-            needId={true}
-            title="Сотрудники"
-            value={""}
-            getItem={item => {
-              setProduct(Object.assign(product, { employeeId: item }));
+          <Autocomplete
+            options={[...employees, ""]}
+            inputValue={inputEmployee}
+            value={employee}
+            onChange={(event, newValue) => {
+              if (newValue && newValue.id)
+                setProduct(Object.assign(product, { employeeId: newValue.id }));
+              else setProduct(Object.assign(product, { employeeId: null }));
+              setEmployee(newValue);
             }}
+            onOpen={() => {
+              if (employees.length === 0) {
+                showNotification(
+                  `Чтобы выбрать Сотрудников, необходимо заранее создавать их в соответствующем списке.`
+                );
+              }
+            }}
+            onInputChange={(event, newInputEmployee) => {
+              setInputEmployee(newInputEmployee);
+            }}
+            getOptionLabel={option => {
+              let showValue = "";
+              if (option.name) showValue = `${option.name}`;
+              return showValue;
+            }}
+            id="controllable-states-employee"
+            style={{ width: 300 }}
+            renderInput={params => (
+              <TextField {...params} label="Сотрудники"></TextField>
+            )}
           />
           <TextField
             id="standard-multiline-description"
