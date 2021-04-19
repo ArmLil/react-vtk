@@ -34,7 +34,7 @@ export default function SelectTextField({
   return (
     <TextField
       id="standard-select-currency"
-      select
+      select={true}
       label={title}
       value={item}
       required={required}

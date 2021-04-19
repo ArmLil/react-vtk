@@ -6,18 +6,16 @@ import Button from "@material-ui/core/Button";
 var moment = require("moment");
 
 const Product = () => {
-  const [products, setProducts] = useState({});
+  const [products, setProducts] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    console.log("use effect");
     const getProducts = async () => {
       const productsFromServer = await fetchProducts();
-      setProducts(Object.assign({}, productsFromServer));
+      setProducts(productsFromServer);
     };
     getProducts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   // Fetch Products
   const fetchProducts = async () => {
     let _product = {};
@@ -187,7 +185,7 @@ const Product = () => {
         if (col.field === "updatedAt") _columns[12] = col;
       });
       _product.columns = _columns;
-    }
+    } else _product.columns = products.columns;
     return _product;
   };
 
@@ -222,7 +220,7 @@ const Product = () => {
           setProducts(newProducts);
         } else {
           const productsFromServer = await fetchProducts();
-          setProducts(Object.assign({}, productsFromServer));
+          setProducts(productsFromServer);
         }
       } catch (err) {
         console.log(err);
@@ -288,18 +286,22 @@ const Product = () => {
   };
 
   // Delete Product
-  const deleteProduct = async parameters => {
+  const deleteProduct = async (parameters, groupDelete = null) => {
     try {
       await fetch(`http://localhost:3001/api/v1/products/${parameters.id}`, {
         method: "DELETE"
       });
-
-      let newRows = products.rows.filter(row => row.id !== parameters.id);
-      let newProducts = Object.assign(
-        {},
-        { columns: products.columns, rows: newRows }
-      );
-      setProducts(newProducts);
+      if (groupDelete === "group") {
+        const productsFromServer = await fetchProducts();
+        setProducts(productsFromServer);
+      } else {
+        let newRows = products.rows.filter(row => row.id !== parameters.id);
+        let newProducts = Object.assign(
+          {},
+          { columns: products.columns, rows: newRows }
+        );
+        setProducts(newProducts);
+      }
     } catch (err) {
       console.log(err);
       enqueueSnackbar(`${err.message}`, {

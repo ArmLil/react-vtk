@@ -1,6 +1,7 @@
 import * as React from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -36,9 +37,12 @@ export default function NamingAddDialog({
   const classes = useStyles();
   const [product, setProduct] = React.useState({});
   const [number, setNumber] = React.useState("");
-  const [count, setCount] = React.useState("1");
+  const [naming, setNaming] = React.useState("");
+  const [count, setCount] = React.useState(1);
   const [bookingDate, setBookingDate] = React.useState("");
   const [note, setNote] = React.useState("");
+
+  const [inputValue, setInputValue] = React.useState("");
 
   const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(Object.assign(event.target.value));
@@ -90,15 +94,30 @@ export default function NamingAddDialog({
             value={number}
             onChange={handleChangeNumber}
           />
-          <SelectTextField
-            items={namings}
-            required={true}
-            needId={true}
-            title="Наименование"
-            value={""}
-            getItem={item => {
-              setProduct(Object.assign(product, { namingId: item }));
+          <Autocomplete
+            options={[...namings, ""]}
+            inputValue={inputValue}
+            value={naming}
+            onChange={(event, newValue) => {
+              if (newValue && newValue.id)
+                setProduct(Object.assign(product, { namingId: newValue.id }));
+              else setProduct(Object.assign(product, { namingId: null }));
+              setNaming(newValue);
             }}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
+            }}
+            getOptionLabel={option => {
+              let showValue = "";
+              if (option.name)
+                showValue = `${option.name}, ${option.decimalNumber}(дец.ном), ${option.type.name}(тип)`;
+              return showValue;
+            }}
+            id="controllable-states-demo"
+            style={{ width: 300 }}
+            renderInput={params => (
+              <TextField {...params} label="Наименование" multiline></TextField>
+            )}
           />
           <TextField
             id="standard-multiline-booking"
@@ -138,7 +157,12 @@ export default function NamingAddDialog({
         <Button onClick={handleClose} color="primary">
           Отменить
         </Button>
-        <Button onClick={ev => handleCreate(ev, product)} color="primary">
+        <Button
+          onClick={ev =>
+            handleCreate(ev, Object.assign(product, { count: count }))
+          }
+          color="primary"
+        >
           Создать
         </Button>
       </DialogActions>

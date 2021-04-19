@@ -6,6 +6,7 @@ import "jspdf-autotable";
 import jsPDF from "jspdf";
 import { XGrid } from "@material-ui/x-grid";
 import Typography from "@material-ui/core/Typography";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   GridToolbarContainer,
@@ -68,7 +69,9 @@ const useStyles = makeStyles({
   iconButton: {
     "&:hover": {
       backgroundColor: "#bdbdbd"
-    }
+    },
+    margin: 0,
+    padding: 1
   },
   root: {
     "& .MuiDataGrid-columnsContainer": {
@@ -93,10 +96,12 @@ export default function ProductTable({
   const [namings, setNamings] = React.useState([]);
   const [model, setModel] = React.useState({});
   const [orientation, setOrientation] = React.useState("portrait");
+  const [deleteDisabled, setDeleteDisabled] = React.useState(true);
   const [selection, setSelection] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
   const [employees, setEmployees] = React.useState([]);
   const [openWorning, setOpenWorning] = React.useState(false);
+  const [openRowsWorning, setOpenRowsWorning] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const classes = useStyles();
@@ -190,6 +195,19 @@ export default function ProductTable({
     if (action === "submit") deleteProduct(parameters);
   };
 
+  const handleDeleteRowsWorningClose = action => {
+    if (action === "submit") {
+      let expRows = [];
+      if (model.rows && Object.keys(model.rows.idRowsLookup).length > 0) {
+        selection.forEach((select, i) => {
+          deleteProduct(model.rows.idRowsLookup[select], "group");
+        });
+      }
+      setSelection([]);
+      setOpenRowsWorning(false);
+    }
+  };
+
   const handleDeleteWorningOpen = params => {
     setOpenWorning(true);
     setParameters(Object.assign({}, params.row));
@@ -228,14 +246,12 @@ export default function ProductTable({
         }
       }
     });
-    console.log({ _headers });
     let expRows = [];
     if (model.rows && Object.keys(model.rows.idRowsLookup).length > 0) {
       selection.forEach((select, i) => {
         expRows.push(model.rows.idRowsLookup[select]);
       });
     }
-    console.log({ expRows });
 
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -266,8 +282,7 @@ export default function ProductTable({
 
     doc.text(title, 40, 40);
     doc.autoTable(content);
-    console.log(window.location.href);
-    doc.save("report.pdf");
+    doc.save("report_vtk.pdf");
   };
 
   const editColumn = {
@@ -353,16 +368,34 @@ export default function ProductTable({
         </div>
 
         <div className={classes.tools}>
-          <Tooltip title="Создать новый элемент">
+          <div>
+            <Tooltip title="Создать новый элемент">
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                onClick={handleAddDialogOpen}
+              >
+                Создать
+              </Button>
+            </Tooltip>
             <Button
-              variant="contained"
-              color="primary"
-              className={classes.add}
-              onClick={handleAddDialogOpen}
+              color="secondary"
+              size="small"
+              style={{ marginLeft: 5 }}
+              disabled={selection.length > 0 ? false : true}
+              onClick={() => setOpenRowsWorning(true)}
+              startIcon={
+                <DeleteIcon
+                  aria-label="delete"
+                  className={classes.iconButton}
+                  style={{ margin: 0 }}
+                ></DeleteIcon>
+              }
             >
-              Создать
+              Удалить
             </Button>
-          </Tooltip>
+          </div>
           <div>
             <GridFilterToolbarButton />
             <GridColumnsToolbarButton />
@@ -391,6 +424,11 @@ export default function ProductTable({
           parameters={parameters}
           handleClose={handleDeleteWorningClose}
         />
+        <WorningDialog
+          openWorning={openRowsWorning}
+          parameters={{ name: "отмеченные строки" }}
+          handleClose={handleDeleteRowsWorningClose}
+        />
       </GridToolbarContainer>
     );
   }
@@ -413,35 +451,22 @@ export default function ProductTable({
         density="standard"
         rows={rows}
         columns={columns}
-        disableColumnMenu={true}
         disableSelectionOnClick={true}
         showColumnRightBorder={true}
         showCellRightBorder={true}
         disableExtendRowFullWidth={true}
-        onStateChange={params => {
-          // console.log(params);
-        }}
         onSelectionModelChange={params => {
           setSelection(params.selectionModel);
         }}
-        onSortModelChange={params => {
-          // console.log(params);
-        }}
         onColumnHeaderClick={params => {
-          setModel(params.api.state);
+          setModel(Object.assign({}, params.api.state));
         }}
         onRowSelected={params => {
-          setModel(params.api.current.state);
+          setModel(Object.assign({}, params.api.current.state));
         }}
         components={{
           Toolbar: CustomToolbar
         }}
-        sortModel={[
-          {
-            field: "number",
-            sort: "asc"
-          }
-        ]}
       />
     </div>
   );

@@ -236,7 +236,6 @@ export default function TypeTable({ types, deleteType, addType, updateType }) {
         density="standard"
         rows={rows}
         columns={columns}
-        disableColumnMenu={true}
         showColumnRightBorder={true}
         showCellRightBorder={true}
         disableExtendRowFullWidth={false}

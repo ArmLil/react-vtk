@@ -252,7 +252,6 @@ export default function NamingTable({
         density="standard"
         rows={rows}
         columns={columns}
-        disableColumnMenu={true}
         showColumnRightBorder={true}
         showCellRightBorder={true}
         disableExtendRowFullWidth={true}

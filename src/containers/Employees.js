@@ -127,7 +127,6 @@ const Employee = () => {
 
   // Add Employee
   const updateEmployee = async employee => {
-    console.log("employee = ", employee);
     try {
       const res = await fetch(
         `http://localhost:3001/api/v1/employees/${employee.id}`,

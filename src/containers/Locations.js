@@ -144,7 +144,6 @@ const Location = () => {
   // Add Location
   const updateLocation = async location => {
     try {
-      console.log(JSON.stringify(location));
       const res = await fetch(
         `http://localhost:3001/api/v1/locations/${location.id}`,
         {

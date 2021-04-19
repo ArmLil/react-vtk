@@ -153,7 +153,6 @@ export default function LocationTable({
         color="primary"
         className={classes.iconButton}
         onClick={() => {
-          console.log({ params });
           handleUpdateDialogOpen(params);
         }}
       >
@@ -245,7 +244,6 @@ export default function LocationTable({
         density="standard"
         rows={rows}
         columns={columns}
-        disableColumnMenu={true}
         showColumnRightBorder={true}
         showCellRightBorder={true}
         disableExtendRowFullWidth={true}
